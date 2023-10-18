@@ -149,7 +149,7 @@ On the client side, the supplicant must be configured as follows:
 
 ### Required Configuration items
 * a routing ID (see {{openquestions_rpid}}) - i.e. "the RADIUS realm"
-* a CA Certificate trust store which contains at least the root CA that issued the server certificate on the EAP-FIDO server. This can be the system-wide WebPKI store, or a dedicated store for the specific purpose of EAP-FIDO server validation.
+* a CA Certificate trust store which contains at least the root CA that issued the server certificate on the EAP-FIDO server. This can be the system-wide WebPKI store, or a dedicated store for the specific purpose of EAP-FIDO server validation. Implementations MUST NOT allow to disable certificate checks.
 
 ### Optional Configuration items
 * Only if the routing ID is not a suffix of the server's name in the certificate: the exact server name
