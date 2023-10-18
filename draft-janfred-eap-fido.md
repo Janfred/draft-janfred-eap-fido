@@ -154,7 +154,7 @@ On the client side, the supplicant must be configured as follows:
 ### Optional Configuration items
 * Only if the routing ID is not a suffix of the server's name in the certificate: the exact server name
 * Only if FIDO2 discoverable credentials are not used: a username
-* Only if FIDO2 discoverable credentials are used, and the FIDO2 credential's scope (see {{openquestions_rpid}} is not a suffix of the routing ID: the exact scope for the FIDO transaction
+* Only if the FIDO2 credential's scope (see {{openquestions_rpid}} is not a suffix of the routing ID: the exact scope for the FIDO transaction
 
 ## TLS handshake phase
 
@@ -207,7 +207,9 @@ The client and server perform a TLS handshake following the specification in {{R
 
 * Clients MUST support validating against a built-in list of Root CAs, ideally WebPKI.
 * Implementations MAY support pinning a trust anchor
-* The RPID MUST be validated against the certificate name (How exactly is still TODO)
+* The RPID MUST be validated against the certificate name:
+  - if the server name is explicitly configured, one of the subjectAltNameDNS names in the certificate must be an exact match to the configured server name.
+  - if the server name is not explicitly configured, one of the subjectAltNameDNS names in the certificate must be either an exact match with the routing ID or end with CONCAT('.', routing ID)
 * TODO: OCSP Stapling? Mandatory or not?
 
 ## FIDO-exchange
@@ -376,7 +378,7 @@ This section will describe the actual FIDO authentication process, that is perfo
 
 The client will use CTAP2 {{FIDO-CTAP2}} to communicate with the authenticator.
 
-The Relying Party ID (RPID) is configured or sent by the server. For discussion on that see {{openquestions_rpid}}. If the expected RPID is explicitly configured, the client verifies that the RPID as sent matches exactly the RPID as configured. If the expected RPID is not explicitly configured, the client verifies that RPID as sent ends with the configured routing ID.
+The Relying Party ID (RPID) is configured or sent by the server. For discussion on that see {{openquestions_rpid}}. If the expected RPID is explicitly configured, the client verifies that the RPID as sent matches exactly the RPID as configured. If the expected RPID is not explicitly configured, the client verifies that the sent RPID is either identical to the routing ID or ends with CONCAT('.', routing ID)
 
 The client data is a concatenation of two items.
 
