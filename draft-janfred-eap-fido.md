@@ -145,7 +145,16 @@ In order to successfully perform an EAP-FIDO authentication, the server and the 
 
 EAP-FIDO assumes that the FIOD authenticator is already registered with the server, that is, the EAP-FIDO server has access to the public key used to verify the authenticator's response as well as the corresponding credential id.
 
-On the client side, the supplicant must be configured with the Relying Party ID (see {{openquestions_rpid}}, and, if Passkeys are not used, with a Username.
+On the client side, the supplicant must be configured as follows:
+
+### Required Configuration items
+* a routing ID (see {{openquestions_rpid}}) - i.e. "the RADIUS realm"
+* a CA Certificate trust store which contains at least the root CA that issued the server certificate on the EAP-FIDO server
+
+### Optional Configuration items
+* Only if the routing ID is not a suffix of the server's name in the certificate: the exact server name
+* Only if FIDO2 discoverable credentials are not used: a username
+* Only if FIDO2 discoverable credentials are used, and the FIDO2 credential's scope (see {{openquestions_rpid}} is not a suffix of the routing ID: the exact scope for the FIDO transaction
 
 ## TLS handshake phase
 
@@ -295,7 +304,6 @@ Auth Data:
 FIDO Signature:
 : The signature as returned from the FIDO authenticator (see {{FIDO-CTAP2}}, Section 6.2)
 
-
 All three attributes MUST be present in the authentication response message.
 
 #### Information Request
@@ -335,7 +343,7 @@ This message is sent along with the last message of the server's TLS handshake.
 The Authentication Request can include authentication requirements, additional client data and a list of Public Key Identifiers.
 
 The client then decides if it has sufficient information to perform the FIDO authentication.
-This can be done by probing the FIDO authenticator with all information given in the Authentication Request message..
+This can be done by probing the FIDO authenticator with all information given in the Authentication Request message.
 
 If the FIDO authentication is already possible at this point, the client performs the FIDO authentication process and sends an Authentication Response message with the results from the FIDO authentication to the server.
 This authentication flow can be used if the FIDO authenticator has a Passkey registered for the given Relying Party ID.
@@ -366,9 +374,9 @@ The server MUST NOT trigger a challenge with the same Public Key Identifier and 
 
 This section will describe the actual FIDO authentication process, that is performed between the EAP-FIDO client and the FIDO authenticator.
 
-The client will use CTAP {{FIDO-CTAP2}} to communicate with the authenticator.
+The client will use CTAP2 {{FIDO-CTAP2}} to communicate with the authenticator.
 
-The Relying Party ID is configured or sent by the server. For discussion on that see {{openquestions_rpid}}.
+The Relying Party ID (RPID) is configured or sent by the server. For discussion on that see {{openquestions_rpid}}. If the expected RPID is explicitly configured, the client verifies that the RPID as sent matches exactly the RPID as configured. If the expected RPID is not explicitly configured, the client verifies that RPID as sent ends with the configured routing ID.
 
 The client data is a concatenation of two items.
 
