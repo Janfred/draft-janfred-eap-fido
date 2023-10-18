@@ -149,12 +149,11 @@ On the client side, the supplicant must be configured as follows:
 
 ### Required Configuration items
 * a routing ID (see {{openquestions_rpid}}) - i.e. "the RADIUS realm"
-* a CA Certificate trust store which contains at least the root CA that issued the server certificate on the EAP-FIDO server
+* a CA Certificate trust store which contains at least the root CA that issued the server certificate on the EAP-FIDO server. This can be the system-wide WebPKI store, or a dedicated store for the specific purpose of EAP-FIDO server validation.
 
 ### Optional Configuration items
 * Only if the routing ID is not a suffix of the server's name in the certificate: the exact server name
 * Only if FIDO2 discoverable credentials are not used: a username
-* Only if the FIDO2 credential's scope (see {{openquestions_rpid}} is not a suffix of the routing ID: the exact scope for the FIDO transaction
 
 ## TLS handshake phase
 
@@ -376,9 +375,9 @@ The server MUST NOT trigger a challenge with the same Public Key Identifier and 
 
 This section will describe the actual FIDO authentication process, that is performed between the EAP-FIDO client and the FIDO authenticator.
 
-The client will use CTAP2 {{FIDO-CTAP2}} to communicate with the authenticator.
+The client will use CTAP version 2.0 or above {{FIDO-CTAP2}} to communicate with the authenticator.
 
-The Relying Party ID (RPID) is configured or sent by the server. For discussion on that see {{openquestions_rpid}}. If the expected RPID is explicitly configured, the client verifies that the RPID as sent matches exactly the RPID as configured. If the expected RPID is not explicitly configured, the client verifies that the sent RPID is either identical to the routing ID or ends with CONCAT('.', routing ID)
+The Relying Party ID (RPID) is configured or derived from the server certificate subjectAltName:DNS. For discussion on that see {{openquestions_rpid}}. In analogy to WebAuthn, the client verifies that the RPID either matches exactly the subjectAltName:DNS of the certificate or that it ends with CONCAT('.', subjectAltName:DNS).
 
 The client data is a concatenation of two items.
 
@@ -402,10 +401,10 @@ This section documents several design decisions for the EAP-FIDO protocol
 
 ## Registration of FIDO2 keys is out of scope
 
-The FIDO CTAP2 protocol has distinct primitives for the registration and the usage of a FIDO2 credential.
+The FIDO CTAP protocol has distinct primitives for the registration and the usage of a FIDO2 credential.
 This specification requires that the registratrion of the security token has been done out-of-band, for example using the WebAuthn protocol in a browser context.
 
-There are multiple degrees of freedom when registering a token with CTAP2.
+There are multiple degrees of freedom when registering a token with CTAP version 2.
 This specification recognises the following choices at registration time, and defines how to effectuate an authentication transaction for any combination of these choices.
 
 ### Discoverable credentials vs. Non-Discoverable credentials
@@ -444,7 +443,7 @@ In EAP-FIDO, the following three notions interplay:
 
 - the realm of username as used in the EAP-Identity exchange ("outer ID")
 - the servername as presented during the EAP-TLS exchange by the EAP-FIDO server
-- the relyingPartyIdentifier (rpId) that is used during the FIDO CTAP2 client authentication phase
+- the relyingPartyIdentifier (rpId) that is used during the FIDO CTAP client authentication phase
 
 EAP-FIDO requires the registered scope to be:
 
