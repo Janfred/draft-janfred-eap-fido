@@ -377,7 +377,9 @@ This section will describe the actual FIDO authentication process, that is perfo
 
 The client will use CTAP version 2.0 or above {{FIDO-CTAP2}} to communicate with the authenticator.
 
-The Relying Party ID (RPID) is configured or derived from the server certificate subjectAltName:DNS. For discussion on that see {{openquestions_rpid}}. In analogy to WebAuthn, the client verifies that the RPID either matches exactly the subjectAltName:DNS of the certificate or that it ends with CONCAT('.', subjectAltName:DNS).
+The Relying Party ID  (RPID) either explicitly configured, derived from the RADIUS routing realm, from the server certificate subjectAltName:DNS or sent by the server.
+In analogy to WebAuthn, the client needs to verify that the RPID either matches exactly the subjectAltName:DNS of the certificate or that the subjectAltName is a subdomain of the RPID.
+For discussion on the topic regarding the relationship RPID, SAN and RADIUS Realm, see {{openquestions_rpid}}.
 
 The client data is a concatenation of two items.
 
@@ -389,7 +391,6 @@ The second item is the optional additional client data sent by the server.
 
 Both items are concatenated and hashed using SHA-256.
 The result is the clientDataHash for the FIDO authentication.
-
 
 # Implementation Guidelines
 
@@ -465,7 +466,15 @@ To prevent this from the start, EAP-FIDO specifies an EAP-TLS based EAP method t
 
 Although this requires protentially duplicate code for supplicants that support multiple EAP-TLS based methods, the authors believe this means of specification to be more resistant against implementation errors and prevent error-prone user interfaces.
 
+# Implementation Status
 
+Note to RFC editor: Remove this section, as well as the reference to {{RFC7942}} before publication
+
+{::boilerplate RFC7942}
+
+There is one early prototype proof-of-concept implementation of EAP-FIDO into hostap (hostapd for the server side, wpa_supplicant on the client side) available.
+The implementation was done before the specification of this draft was finished and is therefore not compatible with any draft version (different message format, simplified message flow, missing security checks), but serves as a proof-of-concept for the overall principle of using FIDO to perform an eduroam login.
+The source code can be found under [https://git.rieckers.it/rieckers/hostap/-/tree/eap_fido_poc_tnc23](https://git.rieckers.it/rieckers/hostap/-/tree/eap_fido_poc_tnc23)
 
 # Security Considerations
 
@@ -576,7 +585,19 @@ Since this specification is an early draft, there are a lot of open questions th
 {: #openquestions_rpid}
 
 FIDO needs a relying party ID to function.
-The question is how this RPID is determined, there are several options that all have pros and cons.
+The question is how this RPID is determined and verified, there are several options that all have pros and cons.
+
+The main thing is to have in mind, that there are three relevant parameters, that need to be put into a certain relationship:
+
+* the RADIUS realm (i.e. 'anonymous@dfn.de')
+* the RPID (i.e. 'eduroam.dfn.de')
+* the Server Certificate Name (usually subjectAltName:DNS, i.e. 'radius.eduroam.dfn.de', in the following abbreviated simply with SAN)
+
+All these three parameters need to be in a pre-defined relationship to allow a simple and hard-to-mess-up-and-still-secure configuration.
+Both the client and the server have to agree on what the RPID is, in order for the FIDO authentication to succeed.
+If there is a defined relationship between the RPID and the certificate name (i.e. SAN needs to be a subrealm of the RPID), then the client needs to verify the certificate against exactly that.
+When does the client do that? What security implications does that bring?
+All these options need some thought.
 
 ### Option 1: Configuration
 The first option would be to just have the RPID as a configuration item, maybe with a default on the realm of the outer username.
@@ -601,10 +622,24 @@ However, this opens up some security issues that are yet to be investigated, sin
 
 ### Option 4: RPID is determined by the server and sent after the TLS handshake
 
-WIth this option, the problem is that the client needs to cache the server certificate in order to determine if the RPID is valid. for the given certificate, unless the rules for certificate verification and RPID determination specify it otherwise.
+With this option, the problem is that the client needs to cache the server certificate in order to determine if the RPID is valid. for the given certificate, unless the rules for certificate verification and RPID determination specify it otherwise.
 One possibility to circumvent this would be to allow the server certificate names and the RPID to deviate, but validate both against the realm of the outer username, e.g. a realm of example.com with a server certificate for radius.example.com and the FIDO RPID fido.example.com.
 
 This, however, adds a whole lot more of security concerns, especially in environments with different independent devisions under the same domain suffix.
+
+# Document Status
+
+Note to RFC Editor: Remove this section before publication.
+
+## Change History
+
+-00: Initial draft version
+
+## Missing Specs
+
+* Error codes and Error handling
+* Key derivation for i.e. WPA2
+  * Will be exported from TLS layer, maybe include some information from the FIDO exchange to bind it to the FIDO exchange?
 
 # Acknowledgments
 {:numbered="false"}
