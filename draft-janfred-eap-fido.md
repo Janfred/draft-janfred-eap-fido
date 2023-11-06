@@ -143,7 +143,7 @@ This section describes the preconditions and the configuration needed for EAP-FI
 
 In order to successfully perform an EAP-FIDO authentication, the server and the client have to meet some preconditions and need to have a configuration.
 
-EAP-FIDO assumes that the FIOD authenticator is already registered with the server, that is, the EAP-FIDO server has access to the public key used to verify the authenticator's response as well as the corresponding credential id.
+EAP-FIDO assumes that the FIDO authenticator is already registered with the server, that is, the EAP-FIDO server has access to the public key used to verify the authenticator's response as well as the corresponding credential id.
 
 On the client side, the supplicant must be configured as follows:
 
