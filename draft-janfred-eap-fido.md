@@ -149,9 +149,17 @@ This section describes the preconditions and the configuration needed for EAP-FI
 
 In order to successfully perform an EAP-FIDO authentication, the server and the client have to meet some preconditions and need to have a configuration.
 
-EAP-FIDO assumes that the FIOD authenticator is already registered with the server, that is, the EAP-FIDO server has access to the public key used to verify the authenticator's response as well as the corresponding credential id.
+EAP-FIDO assumes that the FIDO authenticator is already registered with the server, that is, the EAP-FIDO server has access to the public key used to verify the authenticator's response as well as the corresponding credential id.
 
-On the client side, the supplicant must be configured with the Relying Party ID (see {{openquestions_rpid}}, and, if Passkeys are not used, with a Username.
+On the client side, the supplicant must be configured as follows:
+
+### Required Configuration items
+* a routing ID (see {{openquestions_rpid}}) - i.e. "the RADIUS realm"
+* a CA Certificate trust store which contains at least the root CA that issued the server certificate on the EAP-FIDO server. This can be the system-wide WebPKI store, or a dedicated store for the specific purpose of EAP-FIDO server validation. Implementations MUST NOT allow to disable certificate checks.
+
+### Optional Configuration items
+* Only if the routing ID is not a suffix of the server's name in the certificate: the exact server name
+* Only if FIDO2 discoverable credentials are not used: a username
 
 ## TLS handshake phase
 
@@ -205,7 +213,9 @@ The client and server perform a TLS handshake following the specification in {{R
 
 * Clients MUST support validating against a built-in list of Root CAs, ideally WebPKI.
 * Implementations MAY support pinning a trust anchor
-* The RPID MUST be validated against the certificate name (How exactly is still TODO)
+* The RPID MUST be validated against the certificate name:
+  - if the server name is explicitly configured, one of the subjectAltNameDNS names in the certificate must be an exact match to the configured server name.
+  - if the server name is not explicitly configured, one of the subjectAltNameDNS names in the certificate must be either an exact match with the routing ID or end with CONCAT('.', routing ID)
 * TODO: OCSP Stapling? Mandatory or not?
 
 ## FIDO-exchange
@@ -302,7 +312,6 @@ Auth Data:
 
 FIDO Signature:
 : The signature as returned from the FIDO authenticator (see {{FIDO-CTAP2}}, Section 6.2)
-
 
 All three attributes MUST be present in the authentication response message.
 
