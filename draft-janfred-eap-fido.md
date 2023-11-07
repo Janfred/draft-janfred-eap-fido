@@ -145,15 +145,27 @@ In order to successfully perform an EAP-FIDO authentication, the server and the 
 
 EAP-FIDO assumes that the FIDO authenticator is already registered with the server, that is, the EAP-FIDO server has access to the public key used to verify the authenticator's response as well as the corresponding credential id.
 
-On the client side, the supplicant must be configured as follows:
+On the client side, the supplicant must be configured as follows. There is a minimum of exactly one configuration items, and a set of "advanced options". 
+
+If only the minimum configuration option is provided to the EAP supplicant, the supplicant infers the remainder of the options. For almost all deployments, this minimal configuration should be sufficient for an easy onboarding experience and secure operation.
 
 ### Required Configuration items
-* a routing ID (see {{openquestions_rpid}}) - i.e. "the RADIUS realm"
-* a CA Certificate trust store which contains at least the root CA that issued the server certificate on the EAP-FIDO server. This can be the system-wide WebPKI store, or a dedicated store for the specific purpose of EAP-FIDO server validation. Implementations MUST NOT allow to disable certificate checks.
+* [REALM] a routing ID (see {{openquestions_rpid}}) - i.e. "the RADIUS realm". This is typically the deployer's own domain name.
+
+### Inference rules ###
+
+* [SNAME] TLS Server Certificate name: append "eap-fido-authentication." to the routing ID
+* [RP-ID] CTAP Relying Party ID (RPID): acceptable values for RPID is the set containing:
+  - [REALM]
+  - the registrable suffix of [REALM], if any 
+* [STORE] The default Root CA certificate trust store is the system-wide root CA store for web browser certificate validation ("WebPKI"). For this inferred default to be appropriate, the server certificate needs to be issued by a root CA which is present in that store.
+
 
 ### Optional Configuration items
-* Only if the routing ID is not a suffix of the server's name in the certificate: the exact server name
-* Only if FIDO2 discoverable credentials are not used: a username
+* [UNAME] the username to authenticate as (required only if the registered FIDO credential is not a discoverable credential)
+* [SNAME] the expectedsubjectAltName:DNS for the TLS certificate of the server (required only if the inference rules of the TLS certificate server need to be overwritten for this deployment)
+* [RP-ID] a set with exactly one member - the exact RPID for the EAP-FIDO authentication ceremony (required only if the inference rules for the RPID need to be overwritten for this deployment)
+* [STORE] a dedicated store for the specific purpose of EAP-FIDO server validation. This CA certificate trust store MUST NOT be empty (required only if the server certificate is not issued by a root CA present in the client's system-wide store; or if the large number of CA certificates in the system-wide CA store is considered too insecure by the deployment administrator)
 
 ## TLS handshake phase
 
@@ -195,20 +207,17 @@ The fragmentation method is described in {{RFC5216, Section 2.1.5}}.
 The client and server perform a TLS handshake following the specification in {{RFC5216, Section 2}} and {{RFC9190, Section 2}} with the following modifications:
 
 * TLS version 1.3 or higher MUST be negotiated.
-* Mutual authentication is not required. Implementations MUST support EAP-FIDO without TLS client authentication, but MAY allow it, i.e. if EAP-FIDO is used as a 2-Factor authentication method where TLS client certificates are the first factor and the FIDO authentication is the second.
 * The certificate of the server MUST be validated. The different options for validation are listed in {{tls_server_cert_verify}}.
-* (FIXME, depending on RPID option) The client MUST send the desired Relying Party ID for the FIDO exchange in the Server Name Indication extension.
+* Mutual authentication is not required. Implementations MUST support EAP-FIDO without TLS client authentication, but MAY allow it, i.e. if EAP-FIDO is used as a 2-Factor authentication method where TLS client certificates are the first factor and the FIDO authentication is the second.
 
 ### TLS Server Certificate Verification
 {: #tls_server_cert_verify}
 
 (FIXME: Currently only bulletpoints, will be converted into text)
 
-* Clients MUST support validating against a built-in list of Root CAs, ideally WebPKI.
-* Implementations MAY support pinning a trust anchor
-* The RPID MUST be validated against the certificate name:
-  - if the server name is explicitly configured, one of the subjectAltNameDNS names in the certificate must be an exact match to the configured server name.
-  - if the server name is not explicitly configured, one of the subjectAltNameDNS names in the certificate must be either an exact match with the routing ID or end with CONCAT('.', routing ID)
+* Clients MUST validate that the server certificate's issuing chain ends in a root CA certificate in [STORE].
+* Clients MUST verify that the server certificate contains a subjectAltName:DNS field matching [SNAME]
+* Implementations MAY support pinning a trust anchor (sounds like we allow an override a la "trust this fingerprint"? Maybe better not - "pinning" can be considered equivalent to configuring a single-CA store, which is already covered with the preceding wording ...
 * TODO: OCSP Stapling? Mandatory or not?
 
 ## FIDO-exchange
@@ -276,7 +285,7 @@ With this request, the server sends along information that the client needs to p
 The attributes field in the authentication request message contain the following attributes:
 
 Relying Party ID:
-: The Relying Party ID for the FIDO authentication. See {{openquestions_rpid}}.
+: (Optional) The Relying Party ID for the FIDO authentication. See {{openquestions_rpid}}.
 
 Additional Client Data:
 : (Optional) Additional data to be signed by the FIDO authenticator.
@@ -286,7 +295,6 @@ PKIDs:
 
 Authentication Requirements:
 : (Optional) A list of requirements for the FIDO authentication. The possible options for this version of EAP-FIDO are "up" for requesting user presence and "uv" for requesting user verification. Clients MUST ignore any other value, to ensure forward compatibility.
-
 
 Since this packet signals the start of a new authentication, the client MUST discard any information from previous authentication requests and initialize a new authentication, even if the previous authentication exchange was not completed.
 
@@ -311,7 +319,7 @@ All three attributes MUST be present in the authentication response message.
 
 If a client does not have sufficient information to perform the FIDO authentication, the client can send an information request message to the server.
 
-This is the case if Passkeys are not used, since the FIDO authenticator needs the public key identifier to access the credentials.
+This is the case if Passkeys are not used, since the FIDO authenticator needs the public key identifier to access the credentials; these are stored on the server side.
 
 With the information request the client can transmit additional information that help the server to compile this information.
 
@@ -331,7 +339,7 @@ If an attribute was both present in the Authentication Request and the Informati
 
 #### Error
 
-The Error message signals an error condition on the client side.
+The Error message signals an error condition and can be sent both from client to server and vice versa.
 This error condition does not neccessarily lead to an authentication failure, since the EAP-FIDO server may decide that the previous authentication is sufficient. (See {{examples_2hgracetime}} for an example for this use case)
 
 The attributes field MUST include the attribute Error Code with an error code describing the error and MAY contain an Error Description attribute with a human-readable error description.
@@ -349,8 +357,8 @@ This can be done by probing the FIDO authenticator with all information given in
 If the FIDO authentication is already possible at this point, the client performs the FIDO authentication process and sends an Authentication Response message with the results from the FIDO authentication to the server.
 This authentication flow can be used if the FIDO authenticator has a Passkey registered for the given Relying Party ID.
 
-If the client needs additional information, i.e. because it does not use Passkeys and therefore needs a list of Key Identifiers, the client sends an information request to the server, which may include additional information from client to help the server to fulfil the information request.
-In the current specification, this is namely an identifier, from which the EAP-FIDO server can perform a lookup for all registered FIDO credentials registered to this identifier.
+If the client needs additional information, i.e. because it does not use Passkeys and therefore needs a list of Key Identifiers, the client sends an information request to the server, which includes additional information from client to help the server to fulfil the information request.
+In the current specification, this additional information is [UNAME].
 
 Upon reception of the Information Request message from the client, the server looks up the registered Public Key Identifiers for the given identity.
 Depending on the lookup, the requirements for user presence or user verification may change from the previous assumption.
@@ -377,8 +385,10 @@ This section will describe the actual FIDO authentication process, that is perfo
 
 The client will use CTAP version 2.0 or above {{FIDO-CTAP2}} to communicate with the authenticator.
 
-The Relying Party ID  (RPID) either explicitly configured, derived from the RADIUS routing realm, from the server certificate subjectAltName:DNS or sent by the server.
-In analogy to WebAuthn, the client needs to verify that the RPID either matches exactly the subjectAltName:DNS of the certificate or that the subjectAltName is a subdomain of the RPID.
+The Relying Party ID is the configured or any of the inferred values of [RP-ID]. 
+
+If the server's Authentication Request message included an RPID element, and that element is in [RP-ID], then only the server's signalled value is used. If the server's RPID element does not match any of the values in [RP-ID], the authentication transaction aborts and the clients sends an error code "RPID mismatch" to the server.
+
 For discussion on the topic regarding the relationship RPID, SAN and RADIUS Realm, see {{openquestions_rpid}}.
 
 The client data is a concatenation of two items.
@@ -410,7 +420,7 @@ This specification recognises the following choices at registration time, and de
 
 ### Discoverable credentials vs. Non-Discoverable credentials
 
-FIDO2 tokens contain a master key which never leaves the security perimeter of the token exists on the device.
+FIDO2 tokens contain a master key which never leaves the security perimeter of the token.
 FIDO2 tokens transact by generating asymetric keypairs which are bound to a scope (often: a domain name, a RADIUS realm).
 The scoped keying material is saved in either of two locations:
 
@@ -419,6 +429,13 @@ The scoped keying material is saved in either of two locations:
 - Discoverable Credentials: The keying material is stored on the security token itself, along with the scope for which the keypair was generated. During authentication transactions, only the scope (as configured, or as sent by the server) determines which keypair is to be used in the transaction. The key can store multiple keys for the same scope. The number of keypairs that can be stored on the key is finite.
 
 EAP-FIDO supports both Discoverable and Non-Discoverable credentials.
+
+Registering Discoverable Credentials has several advantages and one disadvantage:
++ No username needs to be sent during the authentication transaction
++ The transaction requires less round-trips due to skipping the username transmission process
++ The amount of data sent from EAP server to EAP peer is significantly smaller, reducing the probability of extra roundtrips or packet fragmentation
++ The scopes of the stored credentials can be seen and enumerated by the EAP supplicant, helping the user in finding the right value for configuring [REALM]
+- The Discoverable Credentials consumes space on the FIDO token.
 
 ### User involvement during registration
 
@@ -446,7 +463,7 @@ In EAP-FIDO, the following three notions interplay:
 - the servername as presented during the EAP-TLS exchange by the EAP-FIDO server
 - the relyingPartyIdentifier (rpId) that is used during the FIDO CTAP client authentication phase
 
-EAP-FIDO requires the registered scope to be:
+EAP-FIDO supports distinct values for all three items. However, it provides a "sane default" configuration requires the registered scope to be:
 
 - identical to the realm in the outer ID
 - within the same second-level domain as the EAP-TLS server certificate will be
