@@ -1,0 +1,2385 @@
+<!DOCTYPE html>
+<html lang="en" class="Internet-Draft">
+<head>
+<meta charset="utf-8">
+<meta content="Common,Latin" name="scripts">
+<meta content="initial-scale=1.0" name="viewport">
+<title>EAP-FIDO</title>
+<meta content="Jan-Frederik Rieckers" name="author">
+<meta content="Stefan Winter" name="author">
+<meta content="
+       This document specifies an EAP method leveraging FIDO2 keys for authentication in EAP. 
+    " name="description">
+<meta content="xml2rfc 3.18.2" name="generator">
+<meta content="EAP" name="keyword">
+<meta content="FIDO" name="keyword">
+<meta content="TLS" name="keyword">
+<meta content="draft-janfred-eap-fido-latest" name="ietf.draft">
+<!-- Generator version information:
+  xml2rfc 3.18.2
+    Python 3.11.6
+    ConfigArgParse 1.5.3
+    google-i18n-address 3.1.0
+    intervaltree 3.1.0
+    Jinja2 3.1.2
+    lxml 4.9.3
+    platformdirs 3.11.0
+    pycountry 22.3.5
+    PyYAML 6.0
+    requests 2.31.0
+    setuptools 67.7.2
+    six 1.16.0
+    wcwidth 0.2.8
+-->
+<link href="draft-janfred-eap-fido.xml" rel="alternate" type="application/rfc+xml">
+<link href="#copyright" rel="license">
+<style type="text/css">@font-face {
+  font-family: 'Lora';
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: local('Lora Italic'), local('Lora-Italic'), url('https://martinthomson.github.io/rfc-css/fonts/lora-italic-cyrillic-ext.woff2') format('woff2');
+  unicode-range: U+0460-052F, U+1C80-1C88, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+@font-face {
+  font-family: 'Lora';
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: local('Lora Italic'), local('Lora-Italic'), url('https://martinthomson.github.io/rfc-css/fonts/lora-italic-cyrillic-ext.woff2') format('woff2');
+  unicode-range: U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+@font-face {
+  font-family: 'Lora';
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: local('Lora Italic'), local('Lora-Italic'), url('https://martinthomson.github.io/rfc-css/fonts/lora-italic-vietnamese.woff2') format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+1EA0-1EF9, U+20AB;
+}
+@font-face {
+  font-family: 'Lora';
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: local('Lora Italic'), local('Lora-Italic'), url('https://martinthomson.github.io/rfc-css/fonts/lora-italic-latin-ext.woff2') format('woff2');
+  unicode-range: U+0100-024F, U+0259, U+1E00-1EFF, U+2020, U+20A0-20AB, U+20AD-20CF, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+
+@font-face {
+  font-family: 'Lora';
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: local('Lora Italic'), local('Lora-Italic'), url('https://martinthomson.github.io/rfc-css/fonts/lora-italic-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: local('Lora Regular'), local('Lora-Regular'), url('https://martinthomson.github.io/rfc-css/fonts/lora-regular-cyrillic-ext.woff2') format('woff2');
+  unicode-range: U+0460-052F, U+1C80-1C88, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: local('Lora Regular'), local('Lora-Regular'), url('https://martinthomson.github.io/rfc-css/fonts/lora-regular-cyrillic.woff2') format('woff2');
+  unicode-range: U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: local('Lora Regular'), local('Lora-Regular'), url('https://martinthomson.github.io/rfc-css/fonts/lora-regular-vietnamese.woff2') format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+1EA0-1EF9, U+20AB;
+}
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: local('Lora Regular'), local('Lora-Regular'), url('https://martinthomson.github.io/rfc-css/fonts/lora-regular-latin-ext.woff2') format('woff2');
+  unicode-range: U+0100-024F, U+0259, U+1E00-1EFF, U+2020, U+20A0-20AB, U+20AD-20CF, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: local('Lora Regular'), local('Lora-Regular'), url('https://martinthomson.github.io/rfc-css/fonts/lora-regular-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: local('Lora Bold'), local('Lora-Bold'), url('https://martinthomson.github.io/rfc-css/fonts/lora-bold-cyrillic-ext.woff2') format('woff2');
+  unicode-range: U+0460-052F, U+1C80-1C88, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: local('Lora Bold'), local('Lora-Bold'), url('https://martinthomson.github.io/rfc-css/fonts/lora-bold-cyrillic.woff2') format('woff2');
+  unicode-range: U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: local('Lora Bold'), local('Lora-Bold'), url('https://martinthomson.github.io/rfc-css/fonts/lora-bold-vietnamese.woff2') format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+1EA0-1EF9, U+20AB;
+}
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: local('Lora Bold'), local('Lora-Bold'), url('https://martinthomson.github.io/rfc-css/fonts/lora-bold-latin-ext.woff2') format('woff2');
+  unicode-range: U+0100-024F, U+0259, U+1E00-1EFF, U+2020, U+20A0-20AB, U+20AD-20CF, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: local('Lora Bold'), local('Lora-Bold'), url('https://martinthomson.github.io/rfc-css/fonts/lora-bold-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: local('Lora SemiBold'), local('Lora-SemiBold'), url('https://martinthomson.github.io/rfc-css/fonts/lora-semibold-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: 'Cabin Condensed';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: local('Cabin Condensed SemiBold'), local('CabinCondensed-SemiBold'), url('https://martinthomson.github.io/rfc-css/fonts/cabincondensed-semibold-vietnamese.woff2') format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+1EA0-1EF9, U+20AB;
+}
+@font-face {
+  font-family: 'Cabin Condensed';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: local('Cabin Condensed SemiBold'), local('CabinCondensed-SemiBold'), url('https://martinthomson.github.io/rfc-css/fonts/cabincondensed-semibold-latin-ext.woff2') format('woff2');
+  unicode-range: U+0100-024F, U+0259, U+1E00-1EFF, U+2020, U+20A0-20AB, U+20AD-20CF, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+  font-family: 'Cabin Condensed';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: local('Cabin Condensed SemiBold'), local('CabinCondensed-SemiBold'), url('https://martinthomson.github.io/rfc-css/fonts/cabincondensed-semibold-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: 'Oxygen Mono';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: local('Oxygen Mono'), local('OxygenMono-Regular'), url('https://martinthomson.github.io/rfc-css/fonts/oxygenmono-regular-latin-ext.woff2') format('woff2');
+  unicode-range: U+0100-024F, U+0259, U+1E00-1EFF, U+2020, U+20A0-20AB, U+20AD-20CF, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+  font-family: 'Oxygen Mono';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: local('Oxygen Mono'), local('OxygenMono-Regular'), url('https://martinthomson.github.io/rfc-css/fonts/oxygenmono-regular-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+:root {
+  color-scheme: light dark;
+  --background-color: #fff;
+  --text-color: #222;
+  --title-color: #191919;
+  --link-color: #2a6496;
+  --highlight-color: #f9f9f9;
+  --line-color: #eee;
+  --pilcrow-weak: #ddd;
+  --pilcrow-strong: #bbb;
+  --small-font-size: 14.5px;
+  --font-mono: 'Oxygen Mono', monospace;
+  scrollbar-color: #bbb #eee;
+}
+body {
+  max-width: 600px;
+  margin: 75px auto;
+  padding: 0 5px;
+  color: var(--text-color);
+  background-color: var(--background-color);
+  font: 16px/22px "Lora", serif;
+  scroll-behavior: smooth;
+}
+
+.ears {
+  display: none;
+}
+
+/* headings */
+h1, h2, h3, h4, h5, h6 {
+  font-family: "Cabin Condensed", sans-serif;
+  font-weight: 600;
+  margin: 0.8em 0 0.3em;
+  font-size-adjust: 0.5;
+  color: var(--title-color);
+}
+h1#title {
+  font-size: 32px;
+  line-height: 40px;
+  clear: both;
+}
+h1#title, h1#rfcnum {
+  margin: 1.5em 0 0.2em;
+}
+h1#rfcnum + h1#title {
+  margin: 0.2em 0;
+}
+
+h1, h2, h3 {
+  font-size: 22px;
+  line-height: 27px;
+}
+h4, h5, h6 {
+  font-size: 20px;
+  line-height: 24px;
+}
+
+/* general structure */
+.author {
+  padding-bottom: 0.3em;
+}
+#abstract+p {
+  font-size: 18px;
+  line-height: 24px;
+}
+#abstract+p code, #abstract+p samp, #abstract+p tt {
+  font-size: 16px;
+  line-height: 0;
+}
+
+p {
+  padding: 0;
+  margin: 0.5em 0;
+  text-align: left;
+}
+div {
+  margin: 0;
+}
+.alignRight.art-text {
+  background-color: var(--highlight-color);
+  border: 1px solid var(--line-color);
+  border-radius: 3px;
+  padding: 0.5em 1em 0;
+  margin-bottom: 0.5em;
+}
+.alignRight.art-text pre {
+  padding: 0;
+  width: auto;
+}
+.alignRight {
+  margin: 1em 0;
+}
+.alignRight > *:first-child {
+  border: none;
+  margin: 0;
+  float: right;
+  clear: both;
+}
+.alignRight > *:nth-child(2) {
+  clear: both;
+  display: block;
+  border: none;
+}
+svg {
+  display: block;
+}
+/* font-family isn't space-separated, but =~ will have to do */
+svg[font-family~="monospace" i], svg [font-family~="monospace" i] {
+  font-family: var(--font-mono);
+}
+.alignCenter.art-text {
+  background-color: var(--highlight-color);
+  border: 1px solid var(--line-color);
+  border-radius: 3px;
+  padding: 0.5em 1em 0;
+  margin-bottom: 0.5em;
+}
+.alignCenter.art-text pre {
+  padding: 0;
+  width: auto;
+}
+.alignCenter {
+  margin: 1em 0;
+}
+.alignCenter > *:first-child {
+  border: none;
+  /* this isn't optimal, but it's an existence proof.  PrinceXML doesn't
+     support flexbox yet.
+  */
+  display: table;
+  margin: 0 auto;
+}
+
+/* lists */
+ol, ul {
+  padding: 0;
+  margin: 0 0 0.5em 2em;
+}
+:is(ol, ul) :is(ol, ul) {
+  margin-left: 1em;
+}
+li {
+  margin: 0 0 0.25em 0;
+}
+.ulCompact li {
+  margin: 0;
+}
+ul.empty, .ulEmpty {
+  list-style-type: none;
+}
+ul.empty li, .ulEmpty li {
+  margin-top: 0.5em;
+}
+:is(ul, ol).compact, .ulCompact, .olCompact {
+  line-height: 1;
+  margin: 0 0 0 2em;
+}
+
+/* definition lists */
+dl {
+  clear: left;
+  --indent: 3ch;
+  /* --indent: attr(indent ch); not supported in any browser, but we can dream */
+}
+dl.olPercent {
+  --indent: 5ch;
+}
+dl > dt {
+  float: left;
+  margin-right: 2ch;
+  min-width: 8ch;
+}
+dl.dlNewline > dt {
+  float: none;
+}
+dl > dd {
+  margin-bottom: .8em;
+  margin-left: var(--indent) !important; /* stupid element overrides */
+  min-height: 2ex;
+}
+dl.olPercent > dt {
+  min-width: calc(var(--indent) - 2ch);
+}
+:is(dl.compact, .dlCompact) > dd {
+  margin-bottom: 0;
+}
+:is(dl.compact, .dlCompact) > dd > :is(:first-child, .break:first-child + *) {
+  margin-top: 0;
+}
+:is(dl.compact, .dlCompact) > dd > :is(:last-child) {
+  margin-bottom: 0;
+}
+dl > dd > dl {
+  margin-top: 0.5em;
+  margin-bottom: 0;
+}
+:is(dd, span).break {
+  display: none;
+}
+
+/* links */
+a, a[href].selfRef:hover {
+  text-decoration: none;
+}
+a[href] {
+  color: var(--link-color);
+}
+a[href].selfRef, .iref + a[href].internal {
+  color: var(--text-color);
+}
+a[href]:hover {
+  text-decoration: underline;
+}
+a[href].selfRef:hover {
+  background-color: var(--highlight-color);
+}
+a.xref:is(.cite, .auto), :is(#status-of-memo, #copyright) a {
+  white-space: nowrap;
+}
+
+/* Figures */
+tt, code, pre {
+  background-color: var(--highlight-color);
+  font: 14px/22px var(--font-mono);
+}
+tt, code {
+  /* changing the font for inline elements leads to different ascender
+     and descender heights; as we want to retain baseline alignment,
+     remove leading to avoid altering the final height of lines
+     note: this fails if these blocks take an entire line,
+     a different solution would be great */
+  line-height: 0;
+}
+:is(h1, h2, h3, h4, h5, h6) :is(tt, code) {
+  font-size: 84%;
+}
+pre {
+  border: 1px solid var(--line-color);
+  font-size: 13.5px;
+  line-height: 16px;
+  letter-spacing: -0.2px;
+  margin: 5px;
+  padding: 5px;
+}
+img {
+  max-width: 100%;
+}
+figure {
+  margin: 0.5em 0;
+  padding: 0;
+}
+figure blockquote {
+  margin: 0.8em 0.4em 0.4em;
+}
+figcaption, caption {
+  font-style: italic;
+  margin: 0.5em 1.5em;
+  text-align: left;
+}
+@media screen {
+  /* Auto-collapse boilerplate. */
+  :is(#status-of-memo, #copyright) p {
+    margin: -2px 0;
+    max-height: 0;
+    transition: max-height 2s ease, margin 0.5s ease 0.5s;
+    overflow: hidden;
+  }
+  :is(#status-of-memo, #copyright):hover p,
+  :is(#status-of-memo, #copyright) h2:target ~ p {
+    margin: 0.5em 0;
+    max-height: 500px;
+    overflow: auto;
+  }
+  pre, svg {
+    display: inline-block;
+    overflow-x: auto;
+  }
+  pre {
+    max-width: 100%;
+    width: calc(100% - 22px - 1em);
+  }
+  svg {
+    max-width: calc(100% - 22px - 1em);
+  }
+  figure pre {
+    display: block;
+    width: calc(100% - 25px);
+  }
+  :is(pre, svg) + .pilcrow {
+    display: inline-block;
+    vertical-align: text-bottom;
+    padding-bottom: 8px;
+  }
+}
+
+/* aside, blockquote */
+aside, blockquote {
+  margin-left: 0;
+  padding: 0 2em;
+  font-style: italic;
+}
+blockquote {
+  margin: 1em 0;
+}
+cite {
+  display: block;
+  text-align: right;
+  font-style: italic;
+}
+
+/* tables */
+table {
+  max-width: 100%;
+  margin: 0 0 1em;
+  border-collapse: collapse;
+}
+table.right {
+  margin-left: auto;
+}
+table.center {
+  margin-left: auto;
+  margin-right: auto;
+}
+table.left {
+  margin-right: auto;
+}
+thead, tbody {
+  border: 1px solid var(--line-color);
+}
+th, td {
+  text-align: left;
+  vertical-align: top;
+  padding: 5px 10px;
+}
+th {
+  background-color: var(--line-color);
+}
+:is(tr:nth-child(2n), thead+tbody > tr:nth-child(2n+1)) > td {
+  background-color: var(--background-color);
+}
+:is(tr:nth-child(2n+1), thead+tbody > tr:nth-child(2n)) > td {
+  background-color: var(--highlight-color);
+}
+table caption {
+  margin: 0;
+  padding: 3px 0 3px 1em;
+}
+table p {
+  margin: 0;
+}
+
+/* pilcrow */
+a.pilcrow {
+  margin-left: 3px;
+  opacity: 0.2;
+  user-select: none;
+}
+a.pilcrow[href] { color: var(--pilcrow-weak); }
+a.pilcrow[href]:hover { text-decoration: none; }
+@media not print {
+  :hover > a.pilcrow {
+    opacity: 1;
+  }
+  a.pilcrow[href]:hover {
+    color: var(--pilcrow-strong);
+    background-color: transparent;
+  }
+}
+@media print {
+  a.pilcrow {
+    display: none;
+  }
+}
+
+/* misc */
+hr {
+  border: 0;
+  border-top: 1px solid var(--line-color);
+}
+.bcp14 {
+  font-variant: small-caps;
+  font-weight: 600;
+  font-size: var(--small-font-size);
+}
+.role {
+  font-variant: all-small-caps;
+}
+sub, sup {
+  line-height: 1;
+  font-size: 80%;
+}
+
+/* info block */
+#identifiers {
+  margin: 0;
+  font-size: var(--small-font-size);
+  line-height: 18px;
+  --identifier-width: 15ch;
+}
+#identifiers dt {
+  width: var(--identifier-width);
+  min-width: var(--identifier-width);
+  clear: left;
+  float: left;
+  text-align: right;
+  margin-right: 1ch;
+}
+#identifiers dd {
+  margin: 0;
+  margin-left: calc(1em + var(--identifier-width)) !important;
+  min-width: 5em;
+}
+#identifiers .authors .author {
+  display: inline-block;
+  margin-right: 1.5em;
+}
+#identifiers .authors .org {
+  font-style: italic;
+}
+
+/* The prepared/rendered info at the very bottom of the page */
+.docInfo {
+  color: #999;
+  font-size: 0.9em;
+  font-style: italic;
+  margin-top: 2em;
+}
+.docInfo .prepared {
+  float: left;
+}
+.docInfo .prepared {
+  float: right;
+}
+
+/* table of contents */
+#toc {
+  padding: 0.75em 0 2em 0;
+  margin-bottom: 1em;
+}
+#toc nav ul {
+  margin: 0 0.5em 0 0;
+  padding: 0;
+  list-style: none;
+}
+#toc nav li {
+  line-height: 1.3em;
+  margin: 2px 0;
+  padding-left: 1.2em;
+  text-indent: -1.2em;
+}
+#toc a.xref {
+  white-space: normal;
+}
+/* references */
+.references dt {
+  text-align: right;
+  font-weight: bold;
+  min-width: 10ch;
+  margin-right: 1.5ch;
+}
+.references dt:target::before {
+  content: "⇒";
+  width: 15px;
+  margin: 0 10px 0 -25px;
+}
+.references dd {
+  margin-left: 12ch !important;
+  overflow: auto;
+}
+
+.refInstance {
+  margin-bottom: 1.25em;
+}
+
+.references .ascii {
+  margin-bottom: 0.25em;
+}
+
+/* index */
+#rfc\.index\.index + ul {
+  margin-left: 0;
+}
+
+/* authors */
+address.vcard {
+  font-style: normal;
+  margin: 1em 0;
+}
+address.vcard .nameRole {
+  font-weight: 700;
+  margin-left: 0;
+}
+address.vcard .label {
+  margin: 0.5em 0;
+}
+address.vcard .type {
+  display: none;
+}
+.alternative-contact {
+  margin: 1.5em 0 1em;
+}
+hr.addr {
+  border-top: 1px dashed;
+  margin: 0;
+  color: #ddd;
+  max-width: calc(100% - 16px);
+}
+@media (min-width: 500px) {
+  #authors-addresses > section {
+    column-count: 2;
+    column-gap: 20px;
+  }
+  #authors-addresses > section > h2 {
+    column-span: all;
+  }
+  /* hack for break-inside: avoid-column */
+  #authors-addresses address {
+    display: inline-block;
+    break-inside: avoid-column;
+  }
+}
+
+.rfcEditorRemove p:first-of-type {
+  font-style: italic;
+}
+.cref {
+  background-color: rgba(249, 232, 105, 0.3);
+  padding: 2px 4px;
+}
+.crefSource {
+  font-style: italic;
+}
+/* alternative layout for smaller screens */
+@media screen and (max-width: 929px) {
+  #toc {
+    position: fixed;
+    z-index: 2;
+    top: 0;
+    right: 0;
+    padding: 1px 0 0 0;
+    margin: 0;
+    border-bottom: 1px solid #ccc;
+    opacity: 0.6;
+  }
+  #toc.active {
+      opacity: 1;
+  }
+  #toc h2 {
+    margin: 0;
+    padding: 2px 0 2px 6px;
+    padding-right: 1em;
+    font-size: 18px;
+    line-height: 24px;
+    min-width: 190px;
+    text-align: right;
+    background-color: #444;
+    color: white;
+    cursor: pointer;
+  }
+  #toc h2::before { /* css hamburger */
+    float: right;
+    position: relative;
+    width: 1em;
+    height: 1px;
+    left: -164px;
+    margin: 8px 0 0 0;
+    background: white none repeat scroll 0 0;
+    box-shadow: 0 4px 0 0 white, 0 8px 0 0 white;
+    content: "";
+  }
+  #toc nav {
+    display: none;
+    background-color: var(--background-color);
+    padding: 0.5em 1em 1em;
+    overflow: auto;
+    overscroll-behavior: contain;
+    height: calc(100vh - 48px);
+    border-left: 1px solid #ddd;
+  }
+  #toc.active nav {
+    display: block;
+  }
+  /* Make the collapsed ToC header render white on gray also when it's a link */
+  #toc h2 a,
+  #toc h2 a:link,
+  #toc h2 a:focus,
+  #toc h2 a:hover,
+  #toc a.toplink,
+  #toc a.toplink:hover {
+    color: white;
+    background-color: #444;
+    text-decoration: none;
+  }
+  #toc a.toplink {
+    margin-top: 2px;
+  }
+}
+
+/* alternative layout for wide screens */
+@media screen and (min-width: 930px) {
+  body {
+    padding-right: 360px;
+    padding-right: calc(min(180px + 20%, 500px));
+  }
+  #toc {
+    position: fixed;
+    bottom: 0;
+    right: 0;
+    right: calc(50vw - 480px);
+    width: 312px;
+    margin: 0;
+    padding: 0;
+    z-index: 1;
+  }
+  #toc h2 {
+    margin: 0;
+    padding: 0.25em 1em 1em 0;
+  }
+  #toc nav {
+    display: block;
+    height: calc(90vh - 84px);
+    bottom: 0;
+    padding: 0.5em 0 2em;
+    overflow: auto;
+    overscroll-behavior: contain;
+    scrollbar-width: thin;
+  }
+  #toc nav > ul  {
+    margin-bottom: 2em;
+  }
+  #toc ul {
+    margin: 0 0 0 4px;
+    font-size: var(--small-font-size);
+  }
+  #toc ul :is(p, li) {
+    margin: 2px 0;
+    line-height: 22px;
+  }
+  img { /* future proofing */
+    max-width: 100%;
+    height: auto;
+  }
+}
+
+/* pagination */
+@media print {
+  body {
+    width: 100%;
+  }
+  p {
+    orphans: 3;
+    widows: 3;
+  }
+  #n-copyright-notice {
+    border-bottom: none;
+  }
+  #toc, #n-introduction {
+    page-break-before: always;
+  }
+  #toc {
+    border-top: none;
+    padding-top: 0;
+  }
+  figure, pre, .vcard {
+    page-break-inside: avoid;
+  }
+  h1, h2, h3, h4, h5, h6 {
+    page-break-after: avoid;
+  }
+  :is(h2, h3, h4, h5, h6)+*, dd {
+    page-break-before: avoid;
+  }
+  pre {
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    font-size: 10pt;
+  }
+  table {
+    border: 1px solid #ddd;
+  }
+  td {
+    border-top: 1px solid #ddd;
+  }
+  .toplink {
+    display: none;
+  }
+}
+
+@page :first {
+  padding-top: 0;
+  @top-left {
+    content: normal;
+    border: none;
+  }
+  @top-center {
+    content: normal;
+    border: none;
+  }
+  @top-right {
+    content: normal;
+    border: none;
+  }
+}
+
+@page {
+  size: A4;
+  margin-bottom: 45mm;
+  padding-top: 20px;
+}
+
+/* Changes introduced to fix issues found during implementation */
+
+/* Separate body from document info even without intervening H1 */
+section {
+  clear: both;
+}
+
+/* Top align author divs, to avoid names without organization dropping level with org names */
+.author {
+  vertical-align: top;
+}
+
+/* Style section numbers with more space between number and title */
+.section-number {
+  padding-right: 0.5em;
+}
+
+/* Add styling for a link in the ToC that points to the top of the document */
+a.toplink {
+  float: right;
+  margin: 8px 0.5em 0;
+}
+
+/* Provide styling for table cell text alignment */
+table .text-left {
+  text-align: left;
+}
+table .text-center {
+  text-align: center;
+}
+table .text-right {
+  text-align: right;
+}
+
+/* Make the alternative author contact information look less like just another
+   author, and group it closer with the primary author contact information */
+.alternative-contact {
+  margin: 0.5em 0 0.25em 0;
+}
+address .non-ascii {
+  margin: 0 0 0 2em;
+}
+
+/* With it being possible to set tables with alignment
+  left, center, and right, { width: 100%; } does not make sense */
+table {
+  width: auto;
+}
+
+/* Avoid reference text that sits in a block with very wide left margin,
+   because of a long floating dt label.*/
+.references dd {
+  overflow: visible;
+}
+
+/* Control caption placement */
+caption {
+  caption-side: bottom;
+}
+
+/* Limit the width of the author address vcard, so names in right-to-left
+   script don't end up on the other side of the page. */
+
+address.vcard {
+  max-width: 20em;
+  margin-right: auto;
+}
+
+/* For address alignment dependent on LTR or RTL scripts */
+address div.left {
+  text-align: left;
+}
+address div.right {
+  text-align: right;
+}
+
+/* Dark mode. */
+@media (prefers-color-scheme: dark) {
+:root {
+  --background-color: #121212;
+  --text-color: #f0f0f0;
+  --title-color: #fff;
+  --link-color: #4da4f0;
+  --highlight-color: #282828;
+  --line-color: #444;
+  --pilcrow-weak: #444;
+  --pilcrow-strong: #666;
+  scrollbar-color: #777 #333;
+}
+}
+
+/* SVG Trick: a prefix match works because only black and white are allowed */
+svg :is([stroke="black"], [stroke^="#000"]) {
+  stroke: var(--text-color);
+}
+svg :is([stroke="white"], [stroke^="#fff"]) {
+  stroke: var(--background-color);
+}
+svg :is([fill="black"], [fill^="#000"], :not([fill])) {
+  fill: var(--text-color);
+}
+svg :is([fill="white"], [fill^="#fff"]) {
+  fill: var(--background-color);
+}
+</style>
+
+</head>
+<body class="xml2rfc">
+<table class="ears">
+<thead><tr>
+<td class="left">Internet-Draft</td>
+<td class="center">EAP-FIDO</td>
+<td class="right">October 2023</td>
+</tr></thead>
+<tfoot><tr>
+<td class="left">Rieckers &amp; Winter</td>
+<td class="center">Expires 25 April 2024</td>
+<td class="right">[Page]</td>
+</tr></tfoot>
+</table>
+<div id="external-metadata" class="document-information"></div>
+<div id="internal-metadata" class="document-information">
+<dl id="identifiers">
+<dt class="label-workgroup">Workgroup:</dt>
+<dd class="workgroup">EAP Method Update</dd>
+<dt class="label-internet-draft">Internet-Draft:</dt>
+<dd class="internet-draft">draft-janfred-eap-fido-latest</dd>
+<dt class="label-published">Published:</dt>
+<dd class="published">
+<time datetime="2023-10-23" class="published">23 October 2023</time>
+    </dd>
+<dt class="label-intended-status">Intended Status:</dt>
+<dd class="intended-status">Standards Track</dd>
+<dt class="label-expires">Expires:</dt>
+<dd class="expires"><time datetime="2024-04-25">25 April 2024</time></dd>
+<dt class="label-authors">Authors:</dt>
+<dd class="authors">
+<div class="author">
+      <div class="author-name">J.-F. Rieckers</div>
+<div class="org">DFN</div>
+</div>
+<div class="author">
+      <div class="author-name">S. Winter</div>
+<div class="org">RESTENA</div>
+</div>
+</dd>
+</dl>
+</div>
+<h1 id="title">EAP-FIDO</h1>
+<section id="section-abstract">
+      <h2 id="abstract"><a href="#abstract" class="selfRef">Abstract</a></h2>
+<p id="section-abstract-1">This document specifies an EAP method leveraging FIDO2 keys for authentication in EAP.<a href="#section-abstract-1" class="pilcrow">¶</a></p>
+</section>
+<section class="note rfcEditorRemove" id="section-note.1">
+      <h2 id="name-about-this-document">
+<a href="#name-about-this-document" class="section-name selfRef">About This Document</a>
+      </h2>
+<p id="section-note.1-1">This note is to be removed before publishing as an RFC.<a href="#section-note.1-1" class="pilcrow">¶</a></p>
+<p id="section-note.1-2">
+        Status information for this document may be found at <span><a href="https://datatracker.ietf.org/doc/draft-janfred-eap-fido/">https://datatracker.ietf.org/doc/draft-janfred-eap-fido/</a></span>.<a href="#section-note.1-2" class="pilcrow">¶</a></p>
+<p id="section-note.1-3">
+        Discussion of this document takes place on the
+        EAP Method Update Working Group mailing list (<span><a href="mailto:emu@ietf.org">mailto:emu@ietf.org</a></span>),
+        which is archived at <span><a href="https://mailarchive.ietf.org/arch/browse/emu/">https://mailarchive.ietf.org/arch/browse/emu/</a></span>.
+        Subscribe at <span><a href="https://www.ietf.org/mailman/listinfo/emu/">https://www.ietf.org/mailman/listinfo/emu/</a></span>.<a href="#section-note.1-3" class="pilcrow">¶</a></p>
+</section>
+<div id="status-of-memo">
+<section id="section-boilerplate.1">
+        <h2 id="name-status-of-this-memo">
+<a href="#name-status-of-this-memo" class="section-name selfRef">Status of This Memo</a>
+        </h2>
+<p id="section-boilerplate.1-1">
+        This Internet-Draft is submitted in full conformance with the
+        provisions of BCP 78 and BCP 79.<a href="#section-boilerplate.1-1" class="pilcrow">¶</a></p>
+<p id="section-boilerplate.1-2">
+        Internet-Drafts are working documents of the Internet Engineering Task
+        Force (IETF). Note that other groups may also distribute working
+        documents as Internet-Drafts. The list of current Internet-Drafts is
+        at <span><a href="https://datatracker.ietf.org/drafts/current/">https://datatracker.ietf.org/drafts/current/</a></span>.<a href="#section-boilerplate.1-2" class="pilcrow">¶</a></p>
+<p id="section-boilerplate.1-3">
+        Internet-Drafts are draft documents valid for a maximum of six months
+        and may be updated, replaced, or obsoleted by other documents at any
+        time. It is inappropriate to use Internet-Drafts as reference
+        material or to cite them other than as "work in progress."<a href="#section-boilerplate.1-3" class="pilcrow">¶</a></p>
+<p id="section-boilerplate.1-4">
+        This Internet-Draft will expire on 25 April 2024.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="copyright">
+<section id="section-boilerplate.2">
+        <h2 id="name-copyright-notice">
+<a href="#name-copyright-notice" class="section-name selfRef">Copyright Notice</a>
+        </h2>
+<p id="section-boilerplate.2-1">
+            Copyright (c) 2023 IETF Trust and the persons identified as the
+            document authors. All rights reserved.<a href="#section-boilerplate.2-1" class="pilcrow">¶</a></p>
+<p id="section-boilerplate.2-2">
+            This document is subject to BCP 78 and the IETF Trust's Legal
+            Provisions Relating to IETF Documents
+            (<span><a href="https://trustee.ietf.org/license-info">https://trustee.ietf.org/license-info</a></span>) in effect on the date of
+            publication of this document. Please review these documents
+            carefully, as they describe your rights and restrictions with
+            respect to this document. Code Components extracted from this
+            document must include Revised BSD License text as described in
+            Section 4.e of the Trust Legal Provisions and are provided without
+            warranty as described in the Revised BSD License.<a href="#section-boilerplate.2-2" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="toc">
+<section id="section-toc.1">
+        <a href="#" onclick="scroll(0,0)" class="toplink">▲</a><h2 id="name-table-of-contents">
+<a href="#name-table-of-contents" class="section-name selfRef">Table of Contents</a>
+        </h2>
+<nav class="toc"><ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.1">
+            <p id="section-toc.1-1.1.1" class="keepWithNext"><a href="#section-1" class="auto internal xref">1</a>.  <a href="#name-introduction" class="internal xref">Introduction</a></p>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.2">
+            <p id="section-toc.1-1.2.1" class="keepWithNext"><a href="#section-2" class="auto internal xref">2</a>.  <a href="#name-conventions-and-definitions" class="internal xref">Conventions and Definitions</a></p>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.3">
+            <p id="section-toc.1-1.3.1"><a href="#section-3" class="auto internal xref">3</a>.  <a href="#name-overview-over-the-eap-fido-" class="internal xref">Overview over the EAP-FIDO protocol</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.3.2.1">
+                <p id="section-toc.1-1.3.2.1.1" class="keepWithNext"><a href="#section-3.1" class="auto internal xref">3.1</a>.  <a href="#name-tls-handshake-phase" class="internal xref">TLS handshake phase</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.3.2.2">
+                <p id="section-toc.1-1.3.2.2.1"><a href="#section-3.2" class="auto internal xref">3.2</a>.  <a href="#name-fido-exchange-phase" class="internal xref">FIDO-exchange phase</a></p>
+</li>
+            </ul>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.4">
+            <p id="section-toc.1-1.4.1"><a href="#section-4" class="auto internal xref">4</a>.  <a href="#name-eap-fido-protocol-flow-and-" class="internal xref">EAP-FIDO protocol flow and message format</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.4.2.1">
+                <p id="section-toc.1-1.4.2.1.1"><a href="#section-4.1" class="auto internal xref">4.1</a>.  <a href="#name-preconditions-and-configura" class="internal xref">Preconditions and Configuration</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.4.2.2">
+                <p id="section-toc.1-1.4.2.2.1"><a href="#section-4.2" class="auto internal xref">4.2</a>.  <a href="#name-tls-handshake-phase-2" class="internal xref">TLS handshake phase</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.4.2.2.2.1">
+                    <p id="section-toc.1-1.4.2.2.2.1.1"><a href="#section-4.2.1" class="auto internal xref">4.2.1</a>.  <a href="#name-eap-fido-start-packet" class="internal xref">EAP-FIDO Start packet</a></p>
+</li>
+                  <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.4.2.2.2.2">
+                    <p id="section-toc.1-1.4.2.2.2.2.1"><a href="#section-4.2.2" class="auto internal xref">4.2.2</a>.  <a href="#name-version-negotiation" class="internal xref">Version negotiation</a></p>
+</li>
+                  <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.4.2.2.2.3">
+                    <p id="section-toc.1-1.4.2.2.2.3.1"><a href="#section-4.2.3" class="auto internal xref">4.2.3</a>.  <a href="#name-fragmentation" class="internal xref">Fragmentation</a></p>
+</li>
+                  <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.4.2.2.2.4">
+                    <p id="section-toc.1-1.4.2.2.2.4.1"><a href="#section-4.2.4" class="auto internal xref">4.2.4</a>.  <a href="#name-tls-handshake-requirements" class="internal xref">TLS Handshake Requirements</a></p>
+</li>
+                  <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.4.2.2.2.5">
+                    <p id="section-toc.1-1.4.2.2.2.5.1"><a href="#section-4.2.5" class="auto internal xref">4.2.5</a>.  <a href="#name-tls-server-certificate-veri" class="internal xref">TLS Server Certificate Verification</a></p>
+</li>
+                </ul>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.4.2.3">
+                <p id="section-toc.1-1.4.2.3.1"><a href="#section-4.3" class="auto internal xref">4.3</a>.  <a href="#name-fido-exchange" class="internal xref">FIDO-exchange</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.4.2.3.2.1">
+                    <p id="section-toc.1-1.4.2.3.2.1.1"><a href="#section-4.3.1" class="auto internal xref">4.3.1</a>.  <a href="#name-message-format" class="internal xref">Message format</a></p>
+</li>
+                  <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.4.2.3.2.2">
+                    <p id="section-toc.1-1.4.2.3.2.2.1"><a href="#section-4.3.2" class="auto internal xref">4.3.2</a>.  <a href="#name-potocol-sequence" class="internal xref">Potocol Sequence</a></p>
+</li>
+                </ul>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.4.2.4">
+                <p id="section-toc.1-1.4.2.4.1"><a href="#section-4.4" class="auto internal xref">4.4</a>.  <a href="#name-fido-authentication" class="internal xref">FIDO authentication</a></p>
+</li>
+            </ul>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.5">
+            <p id="section-toc.1-1.5.1"><a href="#section-5" class="auto internal xref">5</a>.  <a href="#name-implementation-guidelines" class="internal xref">Implementation Guidelines</a></p>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.6">
+            <p id="section-toc.1-1.6.1"><a href="#section-6" class="auto internal xref">6</a>.  <a href="#name-design-decisions" class="internal xref">Design decisions</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.6.2.1">
+                <p id="section-toc.1-1.6.2.1.1"><a href="#section-6.1" class="auto internal xref">6.1</a>.  <a href="#name-registration-of-fido2-keys-" class="internal xref">Registration of FIDO2 keys is out of scope</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.6.2.1.2.1">
+                    <p id="section-toc.1-1.6.2.1.2.1.1"><a href="#section-6.1.1" class="auto internal xref">6.1.1</a>.  <a href="#name-discoverable-credentials-vs" class="internal xref">Discoverable credentials vs. Non-Discoverable credentials</a></p>
+</li>
+                  <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.6.2.1.2.2">
+                    <p id="section-toc.1-1.6.2.1.2.2.1"><a href="#section-6.1.2" class="auto internal xref">6.1.2</a>.  <a href="#name-user-involvement-during-reg" class="internal xref">User involvement during registration</a></p>
+</li>
+                </ul>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.6.2.2">
+                <p id="section-toc.1-1.6.2.2.1"><a href="#section-6.2" class="auto internal xref">6.2</a>.  <a href="#name-fido2-key-scopes" class="internal xref">FIDO2 key scopes</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.6.2.3">
+                <p id="section-toc.1-1.6.2.3.1"><a href="#section-6.3" class="auto internal xref">6.3</a>.  <a href="#name-eap-method-with-eap-tls-vs-" class="internal xref">EAP-Method with EAP-TLS vs standalone EAP method to be used in tunnels</a></p>
+</li>
+            </ul>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.7">
+            <p id="section-toc.1-1.7.1"><a href="#section-7" class="auto internal xref">7</a>.  <a href="#name-implementation-status" class="internal xref">Implementation Status</a></p>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.8">
+            <p id="section-toc.1-1.8.1"><a href="#section-8" class="auto internal xref">8</a>.  <a href="#name-security-considerations" class="internal xref">Security Considerations</a></p>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.9">
+            <p id="section-toc.1-1.9.1"><a href="#section-9" class="auto internal xref">9</a>.  <a href="#name-iana-considerations" class="internal xref">IANA Considerations</a></p>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.10">
+            <p id="section-toc.1-1.10.1"><a href="#section-10" class="auto internal xref">10</a>. <a href="#name-references" class="internal xref">References</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.10.2.1">
+                <p id="section-toc.1-1.10.2.1.1"><a href="#section-10.1" class="auto internal xref">10.1</a>.  <a href="#name-normative-references" class="internal xref">Normative References</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.10.2.2">
+                <p id="section-toc.1-1.10.2.2.1"><a href="#section-10.2" class="auto internal xref">10.2</a>.  <a href="#name-informative-references" class="internal xref">Informative References</a></p>
+</li>
+            </ul>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.11">
+            <p id="section-toc.1-1.11.1"><a href="#appendix-A" class="auto internal xref">Appendix A</a>.  <a href="#name-example-use-cases-and-proto" class="internal xref">Example use cases and protocol flows</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.11.2.1">
+                <p id="section-toc.1-1.11.2.1.1"><a href="#appendix-A.1" class="auto internal xref">A.1</a>.  <a href="#name-authentication-using-passke" class="internal xref">Authentication using Passkeys with silent authentication</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.11.2.2">
+                <p id="section-toc.1-1.11.2.2.1"><a href="#appendix-A.2" class="auto internal xref">A.2</a>.  <a href="#name-authentication-using-passkey" class="internal xref">Authentication using Passkeys with silent auth for WiFi and uv auth for VPN</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.11.2.3">
+                <p id="section-toc.1-1.11.2.3.1"><a href="#appendix-A.3" class="auto internal xref">A.3</a>.  <a href="#name-authentication-with-non-res" class="internal xref">Authentication with non-residential FIDO keys</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.11.2.4">
+                <p id="section-toc.1-1.11.2.4.1"><a href="#appendix-A.4" class="auto internal xref">A.4</a>.  <a href="#name-authentication-with-non-resi" class="internal xref">Authentication with non-residential FIDO keys and user-specific authentication policies</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.11.2.5">
+                <p id="section-toc.1-1.11.2.5.1"><a href="#appendix-A.5" class="auto internal xref">A.5</a>.  <a href="#name-authentication-with-mandato" class="internal xref">Authentication with mandatory verification after a timespan</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.11.2.6">
+                <p id="section-toc.1-1.11.2.6.1"><a href="#appendix-A.6" class="auto internal xref">A.6</a>.  <a href="#name-authentication-with-mandator" class="internal xref">Authentication with mandatory verification after a timespan with a grace period</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.11.2.7">
+                <p id="section-toc.1-1.11.2.7.1"><a href="#appendix-A.7" class="auto internal xref">A.7</a>.  <a href="#name-2fa-authentication-with-cli" class="internal xref">2FA-AUthentication with client certificate on TLS layer and FIDO in the inner authentication</a></p>
+</li>
+            </ul>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.12">
+            <p id="section-toc.1-1.12.1"><a href="#appendix-B" class="auto internal xref">Appendix B</a>.  <a href="#name-open-questions-regarding-pr" class="internal xref">Open Questions regarding Protocol design</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.12.2.1">
+                <p id="section-toc.1-1.12.2.1.1"><a href="#appendix-B.1" class="auto internal xref">B.1</a>.  <a href="#name-how-to-determine-the-fido-r" class="internal xref">How to determine the FIDO Relying Party ID?</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.12.2.1.2.1">
+                    <p id="section-toc.1-1.12.2.1.2.1.1"><a href="#appendix-B.1.1" class="auto internal xref">B.1.1</a>.  <a href="#name-option-1-configuration" class="internal xref">Option 1: Configuration</a></p>
+</li>
+                  <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.12.2.1.2.2">
+                    <p id="section-toc.1-1.12.2.1.2.2.1"><a href="#appendix-B.1.2" class="auto internal xref">B.1.2</a>.  <a href="#name-option-2-mandate-rpid-to-eq" class="internal xref">Option 2: Mandate RPID to equal Realm of the Username</a></p>
+</li>
+                  <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.12.2.1.2.3">
+                    <p id="section-toc.1-1.12.2.1.2.3.1"><a href="#appendix-B.1.3" class="auto internal xref">B.1.3</a>.  <a href="#name-option-3-rpid-is-determined" class="internal xref">Option 3: RPID is determined by the server and sent before the TLS handshake</a></p>
+</li>
+                  <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.12.2.1.2.4">
+                    <p id="section-toc.1-1.12.2.1.2.4.1"><a href="#appendix-B.1.4" class="auto internal xref">B.1.4</a>.  <a href="#name-option-4-rpid-is-determined" class="internal xref">Option 4: RPID is determined by the server and sent after the TLS handshake</a></p>
+</li>
+                </ul>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.12.2.2">
+                <p id="section-toc.1-1.12.2.2.1"><a href="#appendix-B.2" class="auto internal xref">B.2</a>.  <a href="#name-missing-features" class="internal xref">Missing Features</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.12.2.2.2.1">
+                    <p id="section-toc.1-1.12.2.2.2.1.1"><a href="#appendix-B.2.1" class="auto internal xref">B.2.1</a>.  <a href="#name-deprovisioning-of-eap-confi" class="internal xref">Deprovisioning of EAP configuration</a></p>
+</li>
+                </ul>
+</li>
+            </ul>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.13">
+            <p id="section-toc.1-1.13.1"><a href="#appendix-C" class="auto internal xref">Appendix C</a>.  <a href="#name-document-status" class="internal xref">Document Status</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.13.2.1">
+                <p id="section-toc.1-1.13.2.1.1"><a href="#appendix-C.1" class="auto internal xref">C.1</a>.  <a href="#name-change-history" class="internal xref">Change History</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.13.2.2">
+                <p id="section-toc.1-1.13.2.2.1"><a href="#appendix-C.2" class="auto internal xref">C.2</a>.  <a href="#name-missing-specs" class="internal xref">Missing Specs</a></p>
+</li>
+            </ul>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.14">
+            <p id="section-toc.1-1.14.1"><a href="#appendix-D" class="auto internal xref"></a><a href="#name-acknowledgments" class="internal xref">Acknowledgments</a></p>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.15">
+            <p id="section-toc.1-1.15.1"><a href="#appendix-E" class="auto internal xref"></a><a href="#name-authors-addresses" class="internal xref">Authors' Addresses</a></p>
+</li>
+        </ul>
+</nav>
+</section>
+</div>
+<div id="introduction">
+<section id="section-1">
+      <h2 id="name-introduction">
+<a href="#section-1" class="section-number selfRef">1. </a><a href="#name-introduction" class="section-name selfRef">Introduction</a>
+      </h2>
+<p id="section-1-1">The Extensible Authentication Protocol (EAP) <span>[<a href="#RFC3748" class="cite xref">RFC3748</a>]</span> is a widely used standard that allows a server to authenticate a client using different authentication methods.
+There is a huge variety of EAP methods available, that serve different purposes and have different security implications.<a href="#section-1-1" class="pilcrow">¶</a></p>
+<p id="section-1-2">Two common EAP methods are EAP-PEAP and EAP-TTLS <span>[<a href="#RFC5281" class="cite xref">RFC5281</a>]</span>, that both use EAP-TLS <span>[<a href="#RFC5216" class="cite xref">RFC5216</a>]</span> to provide confidentiality of the inner authentication.
+This inner authentication is most commonly password-based, meaning that an attacker that manages to compromise the TLS connection can eavesdrop on the authentication and observe the password.
+The authentication of the server to the client within the TLS handshake thus is a vital security function of these EAP methods.<a href="#section-1-2" class="pilcrow">¶</a></p>
+<p id="section-1-3">The operational praxis has shown that this is a common problem and security flaw.
+The specification for EAP-TLS <span>[<a href="#RFC5216" class="cite xref">RFC5216</a>]</span> does not include guidance on how to decide if a certificate is valid for this specific authentication.
+This standardization gap has lead to user interfaces, where the default setting for certificate validation was set to "Do not validate".
+Even if the validation is active, the supplicant has no implicit information to determine the expected subject name in the server's certificate, so users need to manually configure the expected domain.
+Failure to configure this or not configuring it at all could again lead to an attacker being able to compromise the TLS connection and, as a result, also the password sent in the inner authentication.<a href="#section-1-3" class="pilcrow">¶</a></p>
+<p id="section-1-4">There are two major security problems here, that this specification wants to address.
+Firstly, the use of passwords as authentication method implies that the password needs to be sent to the server.
+If an attacker observes this exchange, they can impersonate the user at any time.
+Therefore, this specification uses FIDO authentication, which is based on asymmetric cryptography.
+With this method, even if an attacker is able to compromise the TLS connection, they cannot impersonate the user based on the observed data.<a href="#section-1-4" class="pilcrow">¶</a></p>
+<p id="section-1-5">The second major security problem is the specification gap regarding certificate validation.
+With EAP-FIDO, the supplicants now have a clear specification on how to decide wether or not a server certificate is considered valid for the current authentication flow.
+This is achieved by using the trust anchors available on most devices and a method to determine the valid server name based on implicit information of the authentication configuration.<a href="#section-1-5" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="conventions-and-definitions">
+<section id="section-2">
+      <h2 id="name-conventions-and-definitions">
+<a href="#section-2" class="section-number selfRef">2. </a><a href="#name-conventions-and-definitions" class="section-name selfRef">Conventions and Definitions</a>
+      </h2>
+<p id="section-2-1">The key words "<span class="bcp14">MUST</span>", "<span class="bcp14">MUST NOT</span>", "<span class="bcp14">REQUIRED</span>", "<span class="bcp14">SHALL</span>", "<span class="bcp14">SHALL NOT</span>", "<span class="bcp14">SHOULD</span>", "<span class="bcp14">SHOULD NOT</span>", "<span class="bcp14">RECOMMENDED</span>", "<span class="bcp14">NOT RECOMMENDED</span>",
+"<span class="bcp14">MAY</span>", and "<span class="bcp14">OPTIONAL</span>" in this document are to be interpreted as
+described in BCP 14 <span>[<a href="#RFC2119" class="cite xref">RFC2119</a>]</span> <span>[<a href="#RFC8174" class="cite xref">RFC8174</a>]</span> when, and only when, they
+appear in all capitals, as shown here.<a href="#section-2-1" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="overview-over-the-eap-fido-protocol">
+<section id="section-3">
+      <h2 id="name-overview-over-the-eap-fido-">
+<a href="#section-3" class="section-number selfRef">3. </a><a href="#name-overview-over-the-eap-fido-" class="section-name selfRef">Overview over the EAP-FIDO protocol</a>
+      </h2>
+<p id="section-3-1">The EAP-FIDO protocol comprises two phases: the TLS handshake phase and FIDO-exchange phase.<a href="#section-3-1" class="pilcrow">¶</a></p>
+<p id="section-3-2">During the TLS handshake phase, TLS is used to authenticate the EAP-FIDO server to the client.<a href="#section-3-2" class="pilcrow">¶</a></p>
+<p id="section-3-3">During the FIDO-exchange phase, the actual FIDO authentication is executed and the client authenticates itself to the server.<a href="#section-3-3" class="pilcrow">¶</a></p>
+<p id="section-3-4">Once the FIDO exchange is completed successfully, the client and server can derive keying material from the TLS handshake phase implicitly.<a href="#section-3-4" class="pilcrow">¶</a></p>
+<div id="tls-handshake-phase">
+<section id="section-3.1">
+        <h3 id="name-tls-handshake-phase">
+<a href="#section-3.1" class="section-number selfRef">3.1. </a><a href="#name-tls-handshake-phase" class="section-name selfRef">TLS handshake phase</a>
+        </h3>
+<p id="section-3.1-1">During the TLS handshake phase, the client and server establish a TLS tunnel.
+This is done using EAP-TLS <span>[<a href="#RFC5216" class="cite xref">RFC5216</a>]</span>, <span>[<a href="#RFC9190" class="cite xref">RFC9190</a>]</span>, <span>[<a href="#RFC9427" class="cite xref">RFC9427</a>]</span> with the modifications described in <a href="#tls_handshake_requirements" class="auto internal xref">Section 4.2.4</a>.
+As part of the TLS handshake protocol, the EAP-FIDO server will send its certificate along with a chain of certificates leading to the certificate of a trusted CA.
+The client will check this certificate using the rules in <a href="#tls_server_cert_verify" class="auto internal xref">Section 4.2.5</a>.<a href="#section-3.1-1" class="pilcrow">¶</a></p>
+<p id="section-3.1-2">Once the TLS tunnel is established, the client and server proceed to the FIDO-exchange phase to perform the authentication of the client.<a href="#section-3.1-2" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="fido-exchange-phase">
+<section id="section-3.2">
+        <h3 id="name-fido-exchange-phase">
+<a href="#section-3.2" class="section-number selfRef">3.2. </a><a href="#name-fido-exchange-phase" class="section-name selfRef">FIDO-exchange phase</a>
+        </h3>
+<p id="section-3.2-1">In this phase, the TLS record layer is used to securily tunnel information between the EAP-FIDO client and EAP-FIDO server.<a href="#section-3.2-1" class="pilcrow">¶</a></p>
+<p id="section-3.2-2">For the FIDO-exchange phase, the client has two options, depending on the configuration and the capability of the FIDO token.<a href="#section-3.2-2" class="pilcrow">¶</a></p>
+<p id="section-3.2-3">If the FIDO token supports residential keys and EAP-FIDO is configured to use these for authentication, the client generates a challenge from the TLS keying material and triggers a FIDO challenge.<a href="#section-3.2-3" class="pilcrow">¶</a></p>
+<p id="section-3.2-4">If the client is not configured to use residential keys, the client first needs to send its username to the server.
+The server will answer with a list of FIDO key IDs and the client will attempt to use one of these keys to authenticate.<a href="#section-3.2-4" class="pilcrow">¶</a></p>
+</section>
+</div>
+</section>
+</div>
+<div id="eap-fido-protocol-flow-and-message-format">
+<section id="section-4">
+      <h2 id="name-eap-fido-protocol-flow-and-">
+<a href="#section-4" class="section-number selfRef">4. </a><a href="#name-eap-fido-protocol-flow-and-" class="section-name selfRef">EAP-FIDO protocol flow and message format</a>
+      </h2>
+<p id="section-4-1">This section describes the preconditions and the configuration needed for EAP-FIDO, the protocol flow and the message format<a href="#section-4-1" class="pilcrow">¶</a></p>
+<div id="preconditions-and-configuration">
+<section id="section-4.1">
+        <h3 id="name-preconditions-and-configura">
+<a href="#section-4.1" class="section-number selfRef">4.1. </a><a href="#name-preconditions-and-configura" class="section-name selfRef">Preconditions and Configuration</a>
+        </h3>
+<p id="section-4.1-1">In order to successfully perform an EAP-FIDO authentication, the server and the client have to meet some preconditions and need to have a configuration.<a href="#section-4.1-1" class="pilcrow">¶</a></p>
+<p id="section-4.1-2">EAP-FIDO assumes that the FIOD authenticator is already registered with the server, that is, the EAP-FIDO server has access to the public key used to verify the authenticator's response as well as the corresponding credential id.<a href="#section-4.1-2" class="pilcrow">¶</a></p>
+<p id="section-4.1-3">On the client side, the supplicant must be configured with the Relying Party ID (see <a href="#openquestions_rpid" class="auto internal xref">Appendix B.1</a>, and, if Passkeys are not used, with a Username.<a href="#section-4.1-3" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="tls-handshake-phase-1">
+<section id="section-4.2">
+        <h3 id="name-tls-handshake-phase-2">
+<a href="#section-4.2" class="section-number selfRef">4.2. </a><a href="#name-tls-handshake-phase-2" class="section-name selfRef">TLS handshake phase</a>
+        </h3>
+<p id="section-4.2-1">The packet format for EAP-FIDO messages follows the format specified in <span>[<a href="#RFC5216" class="cite xref">RFC5216</a>], <a href="https://rfc-editor.org/rfc/rfc5216#section-3" class="relref">Section 3</a></span> with the following modifications:<a href="#section-4.2-1" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-4.2-2.1">
+            <p id="section-4.2-2.1.1">The Type field is set to TODO [awaiting IANA early allocation] (EAP-FIDO)<a href="#section-4.2-2.1.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-4.2-2.2">
+            <p id="section-4.2-2.2.1">Within the Flags field, the Version bits are set to the major version of EAP-FIDO. For this specification, the version is 0. Future EAP-FIDO versions <span class="bcp14">MAY</span> increase the version number.<a href="#section-4.2-2.2.1" class="pilcrow">¶</a></p>
+</li>
+        </ul>
+<div id="eap-fido-start-packet">
+<section id="section-4.2.1">
+          <h4 id="name-eap-fido-start-packet">
+<a href="#section-4.2.1" class="section-number selfRef">4.2.1. </a><a href="#name-eap-fido-start-packet" class="section-name selfRef">EAP-FIDO Start packet</a>
+          </h4>
+<p id="section-4.2.1-1">In the first packet from the server to the client, the S-bit of the Flags <span class="bcp14">MUST</span> be set, indicating the start of the EAP-FIDO protocol.
+It <span class="bcp14">MUST NOT</span> be set in any subsequent packet.<a href="#section-4.2.1-1" class="pilcrow">¶</a></p>
+<p id="section-4.2.1-2"><span class="cref" id="RPID_Option1">Depending on the decision on the way the RPID is determined, some additional spec may be added here, see <a href="#openquestions_rpid" class="auto internal xref">Appendix B.1</a>.<span class="crefSource">Janfred</span></span><a href="#section-4.2.1-2" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="version-negotiation">
+<section id="section-4.2.2">
+          <h4 id="name-version-negotiation">
+<a href="#section-4.2.2" class="section-number selfRef">4.2.2. </a><a href="#name-version-negotiation" class="section-name selfRef">Version negotiation</a>
+          </h4>
+<p id="section-4.2.2-1">The version of EAP-FIDO is negotiated in the first exchange between server and client.
+The server sets the highest major version number of EAP-FIDO that it supports in the V field of the flags in its Start message.
+In the case of this specification, this is 0.
+In its first EAP message in response, the client sets the V field to the highest major version number that it supports that is no higher than the version number offered by the server.
+If the client version is not acceptable to the server, it sends an EAP-Failure to terminate the EAP session.
+Otherwise, the version set by the client is the version of EAP-FIDO that <span class="bcp14">MUST</span> be used and both server and client <span class="bcp14">MUST</span> set the V field to that version number in all subsequent EAP messages.<a href="#section-4.2.2-1" class="pilcrow">¶</a></p>
+<p id="section-4.2.2-2">Given the limited range of the V field (values 0-7), future EAP-FIDO versions <span class="bcp14">MUST NOT</span> increase the major version if there are no changes to the outer message format.
+Minor version updates that only affect the inner protocol flow <span class="bcp14">MUST</span> be done with means available during the TLS handshake, i.e. using Application Layer Protocol Negotiation (ALPN).<a href="#section-4.2.2-2" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="fragmentation">
+<section id="section-4.2.3">
+          <h4 id="name-fragmentation">
+<a href="#section-4.2.3" class="section-number selfRef">4.2.3. </a><a href="#name-fragmentation" class="section-name selfRef">Fragmentation</a>
+          </h4>
+<p id="section-4.2.3-1">Each EAP-FIDO message contains a single leg of a half-duplex conversation.
+Since EAP carrier protocols may constrain the length of an EAP message, it may be neccessary to fragment an EAP-FIDO message across multiple EAP messages.<a href="#section-4.2.3-1" class="pilcrow">¶</a></p>
+<p id="section-4.2.3-2">The fragmentation method is described in <span>[<a href="#RFC5216" class="cite xref">RFC5216</a>], <a href="https://rfc-editor.org/rfc/rfc5216#section-2.1.5" class="relref">Section 2.1.5</a></span>.<a href="#section-4.2.3-2" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="tls_handshake_requirements">
+<section id="section-4.2.4">
+          <h4 id="name-tls-handshake-requirements">
+<a href="#section-4.2.4" class="section-number selfRef">4.2.4. </a><a href="#name-tls-handshake-requirements" class="section-name selfRef">TLS Handshake Requirements</a>
+          </h4>
+<p id="section-4.2.4-1">The client and server perform a TLS handshake following the specification in <span>[<a href="#RFC5216" class="cite xref">RFC5216</a>], <a href="https://rfc-editor.org/rfc/rfc5216#section-2" class="relref">Section 2</a></span> and <span>[<a href="#RFC9190" class="cite xref">RFC9190</a>], <a href="https://rfc-editor.org/rfc/rfc9190#section-2" class="relref">Section 2</a></span> with the following modifications:<a href="#section-4.2.4-1" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-4.2.4-2.1">
+              <p id="section-4.2.4-2.1.1">TLS version 1.3 or higher <span class="bcp14">MUST</span> be negotiated.<a href="#section-4.2.4-2.1.1" class="pilcrow">¶</a></p>
+</li>
+            <li class="normal" id="section-4.2.4-2.2">
+              <p id="section-4.2.4-2.2.1">Mutual authentication is not required. Implementations <span class="bcp14">MUST</span> support EAP-FIDO without TLS client authentication, but <span class="bcp14">MAY</span> allow it, i.e. if EAP-FIDO is used as a 2-Factor authentication method where TLS client certificates are the first factor and the FIDO authentication is the second.<a href="#section-4.2.4-2.2.1" class="pilcrow">¶</a></p>
+</li>
+            <li class="normal" id="section-4.2.4-2.3">
+              <p id="section-4.2.4-2.3.1">The certificate of the server <span class="bcp14">MUST</span> be validated. The different options for validation are listed in <a href="#tls_server_cert_verify" class="auto internal xref">Section 4.2.5</a>.<a href="#section-4.2.4-2.3.1" class="pilcrow">¶</a></p>
+</li>
+            <li class="normal" id="section-4.2.4-2.4">
+              <p id="section-4.2.4-2.4.1">(FIXME, depending on RPID option) The client <span class="bcp14">MUST</span> send the desired Relying Party ID for the FIDO exchange in the Server Name Indication extension.<a href="#section-4.2.4-2.4.1" class="pilcrow">¶</a></p>
+</li>
+          </ul>
+</section>
+</div>
+<div id="tls_server_cert_verify">
+<section id="section-4.2.5">
+          <h4 id="name-tls-server-certificate-veri">
+<a href="#section-4.2.5" class="section-number selfRef">4.2.5. </a><a href="#name-tls-server-certificate-veri" class="section-name selfRef">TLS Server Certificate Verification</a>
+          </h4>
+<p id="section-4.2.5-1">(FIXME: Currently only bulletpoints, will be converted into text)<a href="#section-4.2.5-1" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-4.2.5-2.1">
+              <p id="section-4.2.5-2.1.1">Clients <span class="bcp14">MUST</span> support validating against a built-in list of Root CAs, ideally WebPKI.<a href="#section-4.2.5-2.1.1" class="pilcrow">¶</a></p>
+</li>
+            <li class="normal" id="section-4.2.5-2.2">
+              <p id="section-4.2.5-2.2.1">Implementations <span class="bcp14">MAY</span> support pinning a trust anchor<a href="#section-4.2.5-2.2.1" class="pilcrow">¶</a></p>
+</li>
+            <li class="normal" id="section-4.2.5-2.3">
+              <p id="section-4.2.5-2.3.1">The RPID <span class="bcp14">MUST</span> be validated against the certificate name (How exactly is still TODO)<a href="#section-4.2.5-2.3.1" class="pilcrow">¶</a></p>
+</li>
+            <li class="normal" id="section-4.2.5-2.4">
+              <p id="section-4.2.5-2.4.1">TODO: OCSP Stapling? Mandatory or not?<a href="#section-4.2.5-2.4.1" class="pilcrow">¶</a></p>
+</li>
+          </ul>
+</section>
+</div>
+</section>
+</div>
+<div id="fido-exchange">
+<section id="section-4.3">
+        <h3 id="name-fido-exchange">
+<a href="#section-4.3" class="section-number selfRef">4.3. </a><a href="#name-fido-exchange" class="section-name selfRef">FIDO-exchange</a>
+        </h3>
+<p id="section-4.3-1">After the TLS handshake is completed, the client and server perform the FIDO-exchange to authenticate the client inside the TLS tunnel.<a href="#section-4.3-1" class="pilcrow">¶</a></p>
+<p id="section-4.3-2">This section describes the message format and the protocol flow.<a href="#section-4.3-2" class="pilcrow">¶</a></p>
+<div id="message-format">
+<section id="section-4.3.1">
+          <h4 id="name-message-format">
+<a href="#section-4.3.1" class="section-number selfRef">4.3.1. </a><a href="#name-message-format" class="section-name selfRef">Message format</a>
+          </h4>
+<p id="section-4.3.1-1">All EAP-FIDO messages in the inner authentication consist of a CBOR sequence with two elements:<a href="#section-4.3.1-1" class="pilcrow">¶</a></p>
+<span class="break"></span><dl class="dlParallel" id="section-4.3.1-2">
+            <dt id="section-4.3.1-2.1">type:</dt>
+            <dd style="margin-left: 1.5em" id="section-4.3.1-2.2">
+              <p id="section-4.3.1-2.2.1">integer to indicate the message type. <a href="#msgtypes" class="auto internal xref">Table 1</a> contains a list of the different message types.<a href="#section-4.3.1-2.2.1" class="pilcrow">¶</a></p>
+</dd>
+            <dd class="break"></dd>
+<dt id="section-4.3.1-2.3">attributes:</dt>
+            <dd style="margin-left: 1.5em" id="section-4.3.1-2.4">
+              <p id="section-4.3.1-2.4.1">a CBOR encoded map with attributes. A list of the different attributes, their assigned mapkey and the type are listed in <a href="#mapkeys" class="auto internal xref">Table 2</a>.<a href="#section-4.3.1-2.4.1" class="pilcrow">¶</a></p>
+</dd>
+          <dd class="break"></dd>
+</dl>
+<span id="name-message-types"></span><div id="msgtypes">
+<table class="center" id="table-1">
+            <caption>
+<a href="#table-1" class="selfRef">Table 1</a>:
+<a href="#name-message-types" class="selfRef">Message types</a>
+            </caption>
+<thead>
+              <tr>
+                <th class="text-left" rowspan="1" colspan="1">Type</th>
+                <th class="text-left" rowspan="1" colspan="1">Description</th>
+                <th class="text-left" rowspan="1" colspan="1">Sent by</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="text-left" rowspan="1" colspan="1">-2</td>
+                <td class="text-left" rowspan="1" colspan="1">Error</td>
+                <td class="text-left" rowspan="1" colspan="1">Both</td>
+              </tr>
+              <tr>
+                <td class="text-left" rowspan="1" colspan="1">-1</td>
+                <td class="text-left" rowspan="1" colspan="1">Failure indicator</td>
+                <td class="text-left" rowspan="1" colspan="1">Both</td>
+              </tr>
+              <tr>
+                <td class="text-left" rowspan="1" colspan="1">0</td>
+                <td class="text-left" rowspan="1" colspan="1">Success indicator</td>
+                <td class="text-left" rowspan="1" colspan="1">Both</td>
+              </tr>
+              <tr>
+                <td class="text-left" rowspan="1" colspan="1">1</td>
+                <td class="text-left" rowspan="1" colspan="1">Authentication Request</td>
+                <td class="text-left" rowspan="1" colspan="1">Server</td>
+              </tr>
+              <tr>
+                <td class="text-left" rowspan="1" colspan="1">2</td>
+                <td class="text-left" rowspan="1" colspan="1">Authentication Response</td>
+                <td class="text-left" rowspan="1" colspan="1">Client</td>
+              </tr>
+              <tr>
+                <td class="text-left" rowspan="1" colspan="1">3</td>
+                <td class="text-left" rowspan="1" colspan="1">Information Request</td>
+                <td class="text-left" rowspan="1" colspan="1">Client</td>
+              </tr>
+              <tr>
+                <td class="text-left" rowspan="1" colspan="1">4</td>
+                <td class="text-left" rowspan="1" colspan="1">Information Response</td>
+                <td class="text-left" rowspan="1" colspan="1">Server</td>
+              </tr>
+            </tbody>
+          </table>
+</div>
+<span id="name-mapkeys-for-the-attributes"></span><div id="mapkeys">
+<table class="center" id="table-2">
+            <caption>
+<a href="#table-2" class="selfRef">Table 2</a>:
+<a href="#name-mapkeys-for-the-attributes" class="selfRef">Mapkeys for the attributes</a>
+            </caption>
+<thead>
+              <tr>
+                <th class="text-left" rowspan="1" colspan="1">Mapkey</th>
+                <th class="text-left" rowspan="1" colspan="1">Type</th>
+                <th class="text-left" rowspan="1" colspan="1">Label</th>
+                <th class="text-left" rowspan="1" colspan="1">Description</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="text-left" rowspan="1" colspan="1">0</td>
+                <td class="text-left" rowspan="1" colspan="1">UTF-8 String</td>
+                <td class="text-left" rowspan="1" colspan="1">Identity</td>
+                <td class="text-left" rowspan="1" colspan="1">User Identity (usually username)</td>
+              </tr>
+              <tr>
+                <td class="text-left" rowspan="1" colspan="1">1</td>
+                <td class="text-left" rowspan="1" colspan="1">UTF-8 String</td>
+                <td class="text-left" rowspan="1" colspan="1">Relying Party ID</td>
+                <td class="text-left" rowspan="1" colspan="1">See <a href="#openquestions_rpid" class="auto internal xref">Appendix B.1</a>
+</td>
+              </tr>
+              <tr>
+                <td class="text-left" rowspan="1" colspan="1">2</td>
+                <td class="text-left" rowspan="1" colspan="1">Byte String</td>
+                <td class="text-left" rowspan="1" colspan="1">Additional Client Data</td>
+                <td class="text-left" rowspan="1" colspan="1">Additional Data to be signed by the FIDO authenticator</td>
+              </tr>
+              <tr>
+                <td class="text-left" rowspan="1" colspan="1">3</td>
+                <td class="text-left" rowspan="1" colspan="1">Array of Byte Strings</td>
+                <td class="text-left" rowspan="1" colspan="1">PKIDs</td>
+                <td class="text-left" rowspan="1" colspan="1">List of acceptable Public Key Identifiers</td>
+              </tr>
+              <tr>
+                <td class="text-left" rowspan="1" colspan="1">4</td>
+                <td class="text-left" rowspan="1" colspan="1">Byte String</td>
+                <td class="text-left" rowspan="1" colspan="1">Auth Data</td>
+                <td class="text-left" rowspan="1" colspan="1">Authdata according to <span>[<a href="#WebAuthn" class="cite xref">WebAuthn</a>]</span>, Section 6.1</td>
+              </tr>
+              <tr>
+                <td class="text-left" rowspan="1" colspan="1">5</td>
+                <td class="text-left" rowspan="1" colspan="1">Byte String</td>
+                <td class="text-left" rowspan="1" colspan="1">FIDO Signature</td>
+                <td class="text-left" rowspan="1" colspan="1"> </td>
+              </tr>
+              <tr>
+                <td class="text-left" rowspan="1" colspan="1">6</td>
+                <td class="text-left" rowspan="1" colspan="1">Array of UTF-8 Strings</td>
+                <td class="text-left" rowspan="1" colspan="1">Authentication requirements</td>
+                <td class="text-left" rowspan="1" colspan="1">Sent by the server to indicate the current authentication requiremens, i.e. if user presence or user verification is required</td>
+              </tr>
+              <tr>
+                <td class="text-left" rowspan="1" colspan="1">7</td>
+                <td class="text-left" rowspan="1" colspan="1">Byte String</td>
+                <td class="text-left" rowspan="1" colspan="1">PKID</td>
+                <td class="text-left" rowspan="1" colspan="1">Needed to identify the credential</td>
+              </tr>
+              <tr>
+                <td class="text-left" rowspan="1" colspan="1">8</td>
+                <td class="text-left" rowspan="1" colspan="1">Integer</td>
+                <td class="text-left" rowspan="1" colspan="1">Error Code</td>
+                <td class="text-left" rowspan="1" colspan="1">A code describing the error</td>
+              </tr>
+              <tr>
+                <td class="text-left" rowspan="1" colspan="1">9</td>
+                <td class="text-left" rowspan="1" colspan="1">UTF-8 String</td>
+                <td class="text-left" rowspan="1" colspan="1">Error Description</td>
+                <td class="text-left" rowspan="1" colspan="1">An optional human-readable error description</td>
+              </tr>
+            </tbody>
+          </table>
+</div>
+<div id="success-indicator">
+<section id="section-4.3.1.1">
+            <h5 id="name-success-indicator">
+<a href="#section-4.3.1.1" class="section-number selfRef">4.3.1.1. </a><a href="#name-success-indicator" class="section-name selfRef">Success indicator</a>
+            </h5>
+<p id="section-4.3.1.1-1">This message is the protected success indicator, as required by <span>[<a href="#RFC9427" class="cite xref">RFC9427</a>], <a href="https://rfc-editor.org/rfc/rfc9427#section-5.2" class="relref">Section 5.2</a></span>.
+It is sent by the server to indicate a successfull authentication.
+Since EAP is a strict request-response based protocol, the client needs to reply to this message, so the server can send an EAP-Success message.
+The client will acknowledge the reception of this packet through the acknowledgement mechanism in EAP-TLS with an EAP-TLS acknowledgement packet.<a href="#section-4.3.1.1-1" class="pilcrow">¶</a></p>
+<p id="section-4.3.1.1-2">To achieve the compatibility with the protected success indication mechanism of other EAP methods, the attributes field of the message <span class="bcp14">MUST</span> be omitted, that is, this message is only one byte with the value of 0x00.<a href="#section-4.3.1.1-2" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="failure-indicator">
+<section id="section-4.3.1.2">
+            <h5 id="name-failure-indicator">
+<a href="#section-4.3.1.2" class="section-number selfRef">4.3.1.2. </a><a href="#name-failure-indicator" class="section-name selfRef">Failure indicator</a>
+            </h5>
+<p id="section-4.3.1.2-1">A failure indicator message signals a non-recoverable error condition for the current authentication exchange.<a href="#section-4.3.1.2-1" class="pilcrow">¶</a></p>
+<p id="section-4.3.1.2-2">The attributes field of the message <span class="bcp14">MUST</span> contain at least the Error Code attribute and <span class="bcp14">MAY</span> contain the Error Description attribute.<a href="#section-4.3.1.2-2" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="authentication-request">
+<section id="section-4.3.1.3">
+            <h5 id="name-authentication-request">
+<a href="#section-4.3.1.3" class="section-number selfRef">4.3.1.3. </a><a href="#name-authentication-request" class="section-name selfRef">Authentication Request</a>
+            </h5>
+<p id="section-4.3.1.3-1">An authentication request is sent by the server to initialize a new authentication request.
+With this request, the server sends along information that the client needs to perform the FIDO authentication.<a href="#section-4.3.1.3-1" class="pilcrow">¶</a></p>
+<p id="section-4.3.1.3-2">The attributes field in the authentication request message contain the following attributes:<a href="#section-4.3.1.3-2" class="pilcrow">¶</a></p>
+<span class="break"></span><dl class="dlParallel" id="section-4.3.1.3-3">
+              <dt id="section-4.3.1.3-3.1">Relying Party ID:</dt>
+              <dd style="margin-left: 1.5em" id="section-4.3.1.3-3.2">
+                <p id="section-4.3.1.3-3.2.1">The Relying Party ID for the FIDO authentication. See <a href="#openquestions_rpid" class="auto internal xref">Appendix B.1</a>.<a href="#section-4.3.1.3-3.2.1" class="pilcrow">¶</a></p>
+</dd>
+              <dd class="break"></dd>
+<dt id="section-4.3.1.3-3.3">Additional Client Data:</dt>
+              <dd style="margin-left: 1.5em" id="section-4.3.1.3-3.4">
+                <p id="section-4.3.1.3-3.4.1">(Optional) Additional data to be signed by the FIDO authenticator.<a href="#section-4.3.1.3-3.4.1" class="pilcrow">¶</a></p>
+</dd>
+              <dd class="break"></dd>
+<dt id="section-4.3.1.3-3.5">PKIDs:</dt>
+              <dd style="margin-left: 1.5em" id="section-4.3.1.3-3.6">
+                <p id="section-4.3.1.3-3.6.1">(Optional) A list of acceptable Public Key Identifiers. This can be used to trigger a re-authentication of a specific credential or a list of the identifiers for a specific user, if Passkeys are not used.<a href="#section-4.3.1.3-3.6.1" class="pilcrow">¶</a></p>
+</dd>
+              <dd class="break"></dd>
+<dt id="section-4.3.1.3-3.7">Authentication Requirements:</dt>
+              <dd style="margin-left: 1.5em" id="section-4.3.1.3-3.8">
+                <p id="section-4.3.1.3-3.8.1">(Optional) A list of requirements for the FIDO authentication. The possible options for this version of EAP-FIDO are "up" for requesting user presence and "uv" for requesting user verification. Clients <span class="bcp14">MUST</span> ignore any other value, to ensure forward compatibility.<a href="#section-4.3.1.3-3.8.1" class="pilcrow">¶</a></p>
+</dd>
+            <dd class="break"></dd>
+</dl>
+<p id="section-4.3.1.3-4">Since this packet signals the start of a new authentication, the client <span class="bcp14">MUST</span> initialize a new authentication and <span class="bcp14">MUST NOT</span> reuse information from any previous authentication attempt, even if the previous authentication exchange was not completed.
+It <span class="bcp14">MAY</span> cache some data to perform sanity checks, i.e. to protect itself against misbehaving servers that try to re-initialize an authentication with the same parameters multiple times.<a href="#section-4.3.1.3-4" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="authentication-response">
+<section id="section-4.3.1.4">
+            <h5 id="name-authentication-response">
+<a href="#section-4.3.1.4" class="section-number selfRef">4.3.1.4. </a><a href="#name-authentication-response" class="section-name selfRef">Authentication Response</a>
+            </h5>
+<p id="section-4.3.1.4-1">If a client has sufficient information to perform a FIDO authentication, the client sends an authentication response. The authentication response signifies the completion of one authentication.
+This message can be sent in response to either an Authentication Request or an Information Response.<a href="#section-4.3.1.4-1" class="pilcrow">¶</a></p>
+<span class="break"></span><dl class="dlParallel" id="section-4.3.1.4-2">
+              <dt id="section-4.3.1.4-2.1">The attributes field in the authentication response message contain the following attributes:</dt>
+              <dd style="margin-left: 1.5em" id="section-4.3.1.4-2.2">
+                <p id="section-4.3.1.4-2.2.1"></p><a href="#section-4.3.1.4-2.2" class="pilcrow">¶</a>
+</dd>
+              <dd class="break"></dd>
+<dt id="section-4.3.1.4-2.3">PKID:</dt>
+              <dd style="margin-left: 1.5em" id="section-4.3.1.4-2.4">
+                <p id="section-4.3.1.4-2.4.1">The Public Key Identifier of the FIDO key used to generate the signature.<a href="#section-4.3.1.4-2.4.1" class="pilcrow">¶</a></p>
+</dd>
+              <dd class="break"></dd>
+<dt id="section-4.3.1.4-2.5">Auth Data:</dt>
+              <dd style="margin-left: 1.5em" id="section-4.3.1.4-2.6">
+                <p id="section-4.3.1.4-2.6.1">The signed auth data as returned from the FIDO authenticator (see <span>[<a href="#FIDO-CTAP2" class="cite xref">FIDO-CTAP2</a>]</span>, Section 6.2)<a href="#section-4.3.1.4-2.6.1" class="pilcrow">¶</a></p>
+</dd>
+              <dd class="break"></dd>
+<dt id="section-4.3.1.4-2.7">FIDO Signature:</dt>
+              <dd style="margin-left: 1.5em" id="section-4.3.1.4-2.8">
+                <p id="section-4.3.1.4-2.8.1">The signature as returned from the FIDO authenticator (see <span>[<a href="#FIDO-CTAP2" class="cite xref">FIDO-CTAP2</a>]</span>, Section 6.2)<a href="#section-4.3.1.4-2.8.1" class="pilcrow">¶</a></p>
+</dd>
+            <dd class="break"></dd>
+</dl>
+<p id="section-4.3.1.4-3">All three attributes <span class="bcp14">MUST</span> be present in the authentication response message.<a href="#section-4.3.1.4-3" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="information-request">
+<section id="section-4.3.1.5">
+            <h5 id="name-information-request">
+<a href="#section-4.3.1.5" class="section-number selfRef">4.3.1.5. </a><a href="#name-information-request" class="section-name selfRef">Information Request</a>
+            </h5>
+<p id="section-4.3.1.5-1">If a client does not have sufficient information to perform the FIDO authentication, the client can send an information request message to the server.<a href="#section-4.3.1.5-1" class="pilcrow">¶</a></p>
+<p id="section-4.3.1.5-2">This is the case if Passkeys are not used, since the FIDO authenticator needs the list of acceptable public key identifiers to access the actual credentials on the FIDO token.<a href="#section-4.3.1.5-2" class="pilcrow">¶</a></p>
+<p id="section-4.3.1.5-3">With the information request the client can transmit additional information that help the server to compile this information.<a href="#section-4.3.1.5-3" class="pilcrow">¶</a></p>
+<p id="section-4.3.1.5-4">The attributes field in the information request contains the following attributes:<a href="#section-4.3.1.5-4" class="pilcrow">¶</a></p>
+<span class="break"></span><dl class="dlParallel" id="section-4.3.1.5-5">
+              <dt id="section-4.3.1.5-5.1">Identity:</dt>
+              <dd style="margin-left: 1.5em" id="section-4.3.1.5-5.2">
+                <p id="section-4.3.1.5-5.2.1">The identity of the user (usually a username)<a href="#section-4.3.1.5-5.2.1" class="pilcrow">¶</a></p>
+</dd>
+            <dd class="break"></dd>
+</dl>
+</section>
+</div>
+<div id="information-response">
+<section id="section-4.3.1.6">
+            <h5 id="name-information-response">
+<a href="#section-4.3.1.6" class="section-number selfRef">4.3.1.6. </a><a href="#name-information-response" class="section-name selfRef">Information Response</a>
+            </h5>
+<p id="section-4.3.1.6-1">The server answers to an Information Request from the client with an Information Response.<a href="#section-4.3.1.6-1" class="pilcrow">¶</a></p>
+<p id="section-4.3.1.6-2">This packet is used to transmit additional information to the client.<a href="#section-4.3.1.6-2" class="pilcrow">¶</a></p>
+<p id="section-4.3.1.6-3">The attributes field in the information response can contain any attribute that is also allowed in the Authentication Request packet.
+If an attribute was both present in the Authentication Request and the Information Response packet, the client <span class="bcp14">MUST</span> discard the previous value(s) of this attribute that were sent in the Authentication Request and use the value(s) in the Information Response packet.<a href="#section-4.3.1.6-3" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="error">
+<section id="section-4.3.1.7">
+            <h5 id="name-error">
+<a href="#section-4.3.1.7" class="section-number selfRef">4.3.1.7. </a><a href="#name-error" class="section-name selfRef">Error</a>
+            </h5>
+<p id="section-4.3.1.7-1">The Error message signals an error condition on the client side.
+This error condition does not neccessarily lead to an authentication failure, since the EAP-FIDO server may decide that the previous authentication is sufficient. (See <a href="#examples_2hgracetime" class="auto internal xref">Appendix A.6</a> for an example for this use case)<a href="#section-4.3.1.7-1" class="pilcrow">¶</a></p>
+<p id="section-4.3.1.7-2">The attributes field <span class="bcp14">MUST</span> include the attribute Error Code with an error code describing the error and <span class="bcp14">MAY</span> contain an Error Description attribute with a human-readable error description.<a href="#section-4.3.1.7-2" class="pilcrow">¶</a></p>
+</section>
+</div>
+</section>
+</div>
+<div id="potocol-sequence">
+<section id="section-4.3.2">
+          <h4 id="name-potocol-sequence">
+<a href="#section-4.3.2" class="section-number selfRef">4.3.2. </a><a href="#name-potocol-sequence" class="section-name selfRef">Potocol Sequence</a>
+          </h4>
+<p id="section-4.3.2-1">The FIDO exchange phase starts with the server sending an authentication request to the client.
+This message is sent along with the last message of the server's TLS handshake.<a href="#section-4.3.2-1" class="pilcrow">¶</a></p>
+<p id="section-4.3.2-2">The Authentication Request can include authentication requirements, additional client data and a list of Public Key Identifiers.<a href="#section-4.3.2-2" class="pilcrow">¶</a></p>
+<p id="section-4.3.2-3">The client then decides if it has sufficient information to perform the FIDO authentication.
+This can be done by probing the FIDO authenticator with all information given in the Authentication Request message.<a href="#section-4.3.2-3" class="pilcrow">¶</a></p>
+<p id="section-4.3.2-4">If the FIDO authentication is already possible at this point, the client performs the FIDO authentication process and sends an Authentication Response message with the results from the FIDO authentication to the server.
+This authentication flow can be used if the FIDO authenticator has a Passkey registered for the given Relying Party ID.<a href="#section-4.3.2-4" class="pilcrow">¶</a></p>
+<p id="section-4.3.2-5">If the client needs additional information, i.e. because it does not use Passkeys and therefore needs a list of Key Identifiers, the client sends an information request to the server, which may include additional information from client to help the server to fulfil the information request.
+In the current specification, this is namely an identifier, from which the EAP-FIDO server can perform a lookup for all registered FIDO credentials registered to this identifier.<a href="#section-4.3.2-5" class="pilcrow">¶</a></p>
+<p id="section-4.3.2-6">Upon reception of the Information Request message from the client, the server looks up the registered Public Key Identifiers for the given identity.
+Depending on the lookup, the requirements for user presence or user verification may change from the previous assumption.
+The found Public Key Identifiers, and optionally also the updated authentication requirements, are then sent with the Information Response back to the client.<a href="#section-4.3.2-6" class="pilcrow">¶</a></p>
+<p id="section-4.3.2-7">The client can now, with the additonal information in the Information Response message, perform the FIDO authentication.
+The result of the FIDO authentication is then sent to the Server in an Authentication Response message, which includes the PKID, Auth Data and FIDO Signature from the FIDO authentication result.<a href="#section-4.3.2-7" class="pilcrow">¶</a></p>
+<p id="section-4.3.2-8">When a server receives an Authentication Response message, it validates the FIDO data.
+If the FIDO authentication is successful and the FIDO key has sufficient authorization, the server sends a Success indication message to indicate the Success of the FIDO exchange phase.
+The client will acknowledge this packet using the EAP-TLS acknowledgement mechanism and the server sends an EAP-Success message.<a href="#section-4.3.2-8" class="pilcrow">¶</a></p>
+<p id="section-4.3.2-9">Depending on the result of the FIDO authentication, the user presence or user verification assertions and the policy for a specific FIDO credential, the server <span class="bcp14">MAY</span> choose to trigger a second FIDO authentication with a different set of authentication requirements.
+This is done by sending a new Authentication Request message to the client.
+This message <span class="bcp14">MUST</span> include a PKIDs attribute with only the PKID of the credential used in the previous FIDO authentication process.<a href="#section-4.3.2-9" class="pilcrow">¶</a></p>
+<p id="section-4.3.2-10">The client then triggers a new FIDO authentication process and answers with an Authentication Response message.<a href="#section-4.3.2-10" class="pilcrow">¶</a></p>
+<p id="section-4.3.2-11">The server <span class="bcp14">MUST NOT</span> trigger a challenge with the same Public Key Identifier and Authentication Requirements twice.<a href="#section-4.3.2-11" class="pilcrow">¶</a></p>
+</section>
+</div>
+</section>
+</div>
+<div id="fido-authentication">
+<section id="section-4.4">
+        <h3 id="name-fido-authentication">
+<a href="#section-4.4" class="section-number selfRef">4.4. </a><a href="#name-fido-authentication" class="section-name selfRef">FIDO authentication</a>
+        </h3>
+<p id="section-4.4-1">This section will describe the actual FIDO authentication process, that is performed between the EAP-FIDO client and the FIDO authenticator.<a href="#section-4.4-1" class="pilcrow">¶</a></p>
+<p id="section-4.4-2">The client will use CTAP version 2.0 or above <span>[<a href="#FIDO-CTAP2" class="cite xref">FIDO-CTAP2</a>]</span> to communicate with the authenticator.<a href="#section-4.4-2" class="pilcrow">¶</a></p>
+<p id="section-4.4-3">The Relying Party ID  (RPID) either explicitly configured, derived from the RADIUS routing realm, from the server certificate subjectAltName:DNS or sent by the server.
+In analogy to WebAuthn, the client needs to verify that the RPID either matches exactly the subjectAltName:DNS of the certificate or that the subjectAltName is a subdomain of the RPID.
+For discussion on the topic regarding the relationship RPID, SAN and RADIUS Realm, see <a href="#openquestions_rpid" class="auto internal xref">Appendix B.1</a>.<a href="#section-4.4-3" class="pilcrow">¶</a></p>
+<p id="section-4.4-4">The client data is a concatenation of two items.<a href="#section-4.4-4" class="pilcrow">¶</a></p>
+<p id="section-4.4-5">The first item is derived from the TLS keying material:<a href="#section-4.4-5" class="pilcrow">¶</a></p>
+<div class="alignLeft art-text artwork" id="section-4.4-6">
+<pre>
+FIDO_CHALLENGE_TLS = TLS-Exporter("fido challenge", NULL, 32)
+</pre><a href="#section-4.4-6" class="pilcrow">¶</a>
+</div>
+<p id="section-4.4-7">The second item is the optional additional client data sent by the server.<a href="#section-4.4-7" class="pilcrow">¶</a></p>
+<p id="section-4.4-8">Both items are concatenated and hashed using SHA-256.
+The result is the clientDataHash for the FIDO authentication.<a href="#section-4.4-8" class="pilcrow">¶</a></p>
+</section>
+</div>
+</section>
+</div>
+<div id="implementation-guidelines">
+<section id="section-5">
+      <h2 id="name-implementation-guidelines">
+<a href="#section-5" class="section-number selfRef">5. </a><a href="#name-implementation-guidelines" class="section-name selfRef">Implementation Guidelines</a>
+      </h2>
+<p id="section-5-1">TODO<a href="#section-5-1" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="design-decisions">
+<section id="section-6">
+      <h2 id="name-design-decisions">
+<a href="#section-6" class="section-number selfRef">6. </a><a href="#name-design-decisions" class="section-name selfRef">Design decisions</a>
+      </h2>
+<p id="section-6-1">This section documents several design decisions for the EAP-FIDO protocol<a href="#section-6-1" class="pilcrow">¶</a></p>
+<div id="registration-of-fido2-keys-is-out-of-scope">
+<section id="section-6.1">
+        <h3 id="name-registration-of-fido2-keys-">
+<a href="#section-6.1" class="section-number selfRef">6.1. </a><a href="#name-registration-of-fido2-keys-" class="section-name selfRef">Registration of FIDO2 keys is out of scope</a>
+        </h3>
+<p id="section-6.1-1">The FIDO CTAP protocol has distinct primitives for the registration and the usage of a FIDO2 credential.
+This specification requires that the registratrion of the security token has been done out-of-band, for example using the WebAuthn protocol in a browser context.<a href="#section-6.1-1" class="pilcrow">¶</a></p>
+<p id="section-6.1-2">There are multiple degrees of freedom when registering a token with CTAP version 2.
+This specification recognises the following choices at registration time, and defines how to effectuate an authentication transaction for any combination of these choices.<a href="#section-6.1-2" class="pilcrow">¶</a></p>
+<div id="discoverable-credentials-vs-non-discoverable-credentials">
+<section id="section-6.1.1">
+          <h4 id="name-discoverable-credentials-vs">
+<a href="#section-6.1.1" class="section-number selfRef">6.1.1. </a><a href="#name-discoverable-credentials-vs" class="section-name selfRef">Discoverable credentials vs. Non-Discoverable credentials</a>
+          </h4>
+<p id="section-6.1.1-1">FIDO2 tokens contain a master key which never leaves the security perimeter of the token exists on the device.
+FIDO2 tokens transact by generating asymetric keypairs which are bound to a scope (often: a domain name, a RADIUS realm).
+The scoped keying material is saved in either of two locations:<a href="#section-6.1.1-1" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-6.1.1-2.1">
+              <p id="section-6.1.1-2.1.1">Non-Discoverable Credentials: All the keying material is stored on the server-side. The private key is encrypted with the token-specific master key so that the server can store, but not use, the device's private key. During authentication transactions, the keying material is sent to the token for local decryption and usage. The security token itself does not store any data persistently; it is stateless and thus the number of keypairs and scopes it manages is infinite.<a href="#section-6.1.1-2.1.1" class="pilcrow">¶</a></p>
+</li>
+            <li class="normal" id="section-6.1.1-2.2">
+              <p id="section-6.1.1-2.2.1">Discoverable Credentials: The keying material is stored on the security token itself, along with the scope for which the keypair was generated. During authentication transactions, only the scope (as configured, or as sent by the server) determines which keypair is to be used in the transaction. The key can store multiple keys for the same scope. The number of keypairs that can be stored on the key is finite.<a href="#section-6.1.1-2.2.1" class="pilcrow">¶</a></p>
+</li>
+          </ul>
+<p id="section-6.1.1-3">EAP-FIDO supports both Discoverable and Non-Discoverable credentials.<a href="#section-6.1.1-3" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="user-involvement-during-registration">
+<section id="section-6.1.2">
+          <h4 id="name-user-involvement-during-reg">
+<a href="#section-6.1.2" class="section-number selfRef">6.1.2. </a><a href="#name-user-involvement-during-reg" class="section-name selfRef">User involvement during registration</a>
+          </h4>
+<p id="section-6.1.2-1">Token registration can involve one of two levels of asserting the user presence.<a href="#section-6.1.2-1" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-6.1.2-2.1">
+              <p id="section-6.1.2-2.1.1">UP (userPresence): the registration ceremony ensures that a person is present at the token while registering the device (e.g. human tissue needs to touch a physical security key while the registration transaction executes).<a href="#section-6.1.2-2.1.1" class="pilcrow">¶</a></p>
+</li>
+            <li class="normal" id="section-6.1.2-2.2">
+              <p id="section-6.1.2-2.2.1">UV (userVerification): the security token registers a unique property of the user during the registration ceremony, such that it is asserted that only the exact same person can interact with the token in the future (e.g. by registering a fingerprint or facial recognition)<a href="#section-6.1.2-2.2.1" class="pilcrow">¶</a></p>
+</li>
+          </ul>
+<p id="section-6.1.2-3">During authentication transactions, an EAP-FIDO server can request one of three levels of asserting user presence.<a href="#section-6.1.2-3" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-6.1.2-4.1">
+              <p id="section-6.1.2-4.1.1">Silent (interaction with a human is not required)<a href="#section-6.1.2-4.1.1" class="pilcrow">¶</a></p>
+</li>
+            <li class="normal" id="section-6.1.2-4.2">
+              <p id="section-6.1.2-4.2.1">UP (physical interaction with a person is required)<a href="#section-6.1.2-4.2.1" class="pilcrow">¶</a></p>
+</li>
+            <li class="normal" id="section-6.1.2-4.3">
+              <p id="section-6.1.2-4.3.1">UV (physical interaction with the registered user is required).<a href="#section-6.1.2-4.3.1" class="pilcrow">¶</a></p>
+</li>
+          </ul>
+<p id="section-6.1.2-5">An authentication transaction can not request a higher level than was set at registration time; i.e. a token registered in UP mode can not transact in UV mode.<a href="#section-6.1.2-5" class="pilcrow">¶</a></p>
+<p id="section-6.1.2-6">EAP-FIDO supports all three transaction modes, and the server can signal its required minimum assertion level for each individual authentication transaction.<a href="#section-6.1.2-6" class="pilcrow">¶</a></p>
+</section>
+</div>
+</section>
+</div>
+<div id="fido2-key-scopes">
+<section id="section-6.2">
+        <h3 id="name-fido2-key-scopes">
+<a href="#section-6.2" class="section-number selfRef">6.2. </a><a href="#name-fido2-key-scopes" class="section-name selfRef">FIDO2 key scopes</a>
+        </h3>
+<p id="section-6.2-1">The scope of a FIDO2 key as set during the registration transaction determines the contexts in which it can be used.
+In EAP-FIDO, the following three notions interplay:<a href="#section-6.2-1" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-6.2-2.1">
+            <p id="section-6.2-2.1.1">the realm of username as used in the EAP-Identity exchange ("outer ID")<a href="#section-6.2-2.1.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-6.2-2.2">
+            <p id="section-6.2-2.2.1">the servername as presented during the EAP-TLS exchange by the EAP-FIDO server<a href="#section-6.2-2.2.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-6.2-2.3">
+            <p id="section-6.2-2.3.1">the relyingPartyIdentifier (rpId) that is used during the FIDO CTAP client authentication phase<a href="#section-6.2-2.3.1" class="pilcrow">¶</a></p>
+</li>
+        </ul>
+<p id="section-6.2-3">EAP-FIDO requires the registered scope to be:<a href="#section-6.2-3" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-6.2-4.1">
+            <p id="section-6.2-4.1.1">identical to the realm in the outer ID<a href="#section-6.2-4.1.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-6.2-4.2">
+            <p id="section-6.2-4.2.1">within the same second-level domain as the EAP-TLS server certificate will be<a href="#section-6.2-4.2.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-6.2-4.3">
+            <p id="section-6.2-4.3.1">within the same second-level domain as the FIDO rpId<a href="#section-6.2-4.3.1" class="pilcrow">¶</a></p>
+</li>
+        </ul>
+</section>
+</div>
+<div id="eap-method-with-eap-tls-vs-standalone-eap-method-to-be-used-in-tunnels">
+<section id="section-6.3">
+        <h3 id="name-eap-method-with-eap-tls-vs-">
+<a href="#section-6.3" class="section-number selfRef">6.3. </a><a href="#name-eap-method-with-eap-tls-vs-" class="section-name selfRef">EAP-Method with EAP-TLS vs standalone EAP method to be used in tunnels</a>
+        </h3>
+<p id="section-6.3-1">Since there already exist EAP methods that provide a TLS tunnel and are capable of encapsulating further EAP methods, e.g. EAP-PEAP, EAP-TTLS or EAP-TEAP, the question arises, why this specification does not focus solely on the FIDO exchange as a standalone EAP method instead of re-specifying a new EAP-method that again makes use of EAP-TLS.<a href="#section-6.3-1" class="pilcrow">¶</a></p>
+<p id="section-6.3-2">The main reason for a decision against this is the potential for misconfiguration.
+One of the goals for this EAP method is to provide a means to validate the server certificate using implicit configuration options.
+Using EAP-TTLS or EAP-PEAP would counteract this goal, since in most supplicants the configuration for the different phases of the tunneled TLS methods is done seperately, so the users would have to configure the certificate check parameters manually again.
+Additionally, not every supplicant application may allow the code for the phase 2 exchange to access information about the phase 1 exchange, namely the server certificate parameters, which is neccessary for the security of the EAP-FIDO exchange.
+Specifying EAP-FIDO as standalone EAP methods could therefore require modifying the EAP stack.
+Implementers might be tempted to re-use the insecure and error-prone configuration interfaces.
+To prevent this from the start, EAP-FIDO specifies an EAP-TLS based EAP method that cannot be used standalone.<a href="#section-6.3-2" class="pilcrow">¶</a></p>
+<p id="section-6.3-3">Although this requires protentially duplicate code for supplicants that support multiple EAP-TLS based methods, the authors believe this means of specification to be more resistant against implementation errors and prevent error-prone user interfaces.<a href="#section-6.3-3" class="pilcrow">¶</a></p>
+</section>
+</div>
+</section>
+</div>
+<div id="implementation-status">
+<section id="section-7">
+      <h2 id="name-implementation-status">
+<a href="#section-7" class="section-number selfRef">7. </a><a href="#name-implementation-status" class="section-name selfRef">Implementation Status</a>
+      </h2>
+<p id="section-7-1">Note to RFC editor: Remove this section, as well as the reference to <span>[<a href="#RFC7942" class="cite xref">RFC7942</a>]</span> before publication<a href="#section-7-1" class="pilcrow">¶</a></p>
+<p id="section-7-2">This section records the status of known implementations of the
+protocol defined by this specification at the time of posting of
+this Internet-Draft, and is based on a proposal described in
+<span>[<a href="#RFC7942" class="cite xref">RFC7942</a>]</span>.  The description of implementations in this section is
+intended to assist the IETF in its decision processes in
+progressing drafts to RFCs.  Please note that the listing of any
+individual implementation here does not imply endorsement by the
+IETF.  Furthermore, no effort has been spent to verify the
+information presented here that was supplied by IETF contributors.
+This is not intended as, and must not be construed to be, a
+catalog of available implementations or their features.  Readers
+are advised to note that other implementations may exist.<a href="#section-7-2" class="pilcrow">¶</a></p>
+<p id="section-7-3">According to <span>[<a href="#RFC7942" class="cite xref">RFC7942</a>]</span>, "this will allow reviewers and working
+groups to assign due consideration to documents that have the
+benefit of running code, which may serve as evidence of valuable
+experimentation and feedback that have made the implemented
+protocols more mature.  It is up to the individual working groups
+to use this information as they see fit".<a href="#section-7-3" class="pilcrow">¶</a></p>
+<p id="section-7-4">There is one early prototype proof-of-concept implementation of EAP-FIDO into hostap (hostapd for the server side, wpa_supplicant on the client side) available.
+The implementation was done before the specification of this draft was finished and is therefore not compatible with any draft version (different message format, simplified message flow, missing security checks), but serves as a proof-of-concept for the overall principle of using FIDO to perform an eduroam login.
+The source code can be found under <a href="https://git.rieckers.it/rieckers/hostap/-/tree/eap_fido_poc_tnc23">https://git.rieckers.it/rieckers/hostap/-/tree/eap_fido_poc_tnc23</a><a href="#section-7-4" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="security-considerations">
+<section id="section-8">
+      <h2 id="name-security-considerations">
+<a href="#section-8" class="section-number selfRef">8. </a><a href="#name-security-considerations" class="section-name selfRef">Security Considerations</a>
+      </h2>
+<p id="section-8-1">TODO Security<a href="#section-8-1" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="iana-considerations">
+<section id="section-9">
+      <h2 id="name-iana-considerations">
+<a href="#section-9" class="section-number selfRef">9. </a><a href="#name-iana-considerations" class="section-name selfRef">IANA Considerations</a>
+      </h2>
+<p id="section-9-1">This document has IANA actions:<a href="#section-9-1" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-9-2.1">
+          <p id="section-9-2.1.1">EAP type code point for EAP-FIDO<a href="#section-9-2.1.1" class="pilcrow">¶</a></p>
+</li>
+        <li class="normal" id="section-9-2.2">
+          <p id="section-9-2.2.1">EAP-FIDO registry<a href="#section-9-2.2.1" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-9-2.2.2.1">
+              <p id="section-9-2.2.2.1.1">Message types<a href="#section-9-2.2.2.1.1" class="pilcrow">¶</a></p>
+</li>
+            <li class="normal" id="section-9-2.2.2.2">
+              <p id="section-9-2.2.2.2.1">Attributes<a href="#section-9-2.2.2.2.1" class="pilcrow">¶</a></p>
+</li>
+          </ul>
+</li>
+      </ul>
+</section>
+</div>
+<section id="section-10">
+      <h2 id="name-references">
+<a href="#section-10" class="section-number selfRef">10. </a><a href="#name-references" class="section-name selfRef">References</a>
+      </h2>
+<div id="sec-normative-references">
+<section id="section-10.1">
+        <h3 id="name-normative-references">
+<a href="#section-10.1" class="section-number selfRef">10.1. </a><a href="#name-normative-references" class="section-name selfRef">Normative References</a>
+        </h3>
+<dl class="references">
+<dt id="RFC2119">[RFC2119]</dt>
+        <dd>
+<span class="refAuthor">Bradner, S.</span>, <span class="refTitle">"Key words for use in RFCs to Indicate Requirement Levels"</span>, <span class="seriesInfo">BCP 14</span>, <span class="seriesInfo">RFC 2119</span>, <span class="seriesInfo">DOI 10.17487/RFC2119</span>, <time datetime="1997-03" class="refDate">March 1997</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc2119">https://www.rfc-editor.org/rfc/rfc2119</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="RFC5216">[RFC5216]</dt>
+        <dd>
+<span class="refAuthor">Simon, D.</span>, <span class="refAuthor">Aboba, B.</span>, and <span class="refAuthor">R. Hurst</span>, <span class="refTitle">"The EAP-TLS Authentication Protocol"</span>, <span class="seriesInfo">RFC 5216</span>, <span class="seriesInfo">DOI 10.17487/RFC5216</span>, <time datetime="2008-03" class="refDate">March 2008</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc5216">https://www.rfc-editor.org/rfc/rfc5216</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="RFC8174">[RFC8174]</dt>
+        <dd>
+<span class="refAuthor">Leiba, B.</span>, <span class="refTitle">"Ambiguity of Uppercase vs Lowercase in RFC 2119 Key Words"</span>, <span class="seriesInfo">BCP 14</span>, <span class="seriesInfo">RFC 8174</span>, <span class="seriesInfo">DOI 10.17487/RFC8174</span>, <time datetime="2017-05" class="refDate">May 2017</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc8174">https://www.rfc-editor.org/rfc/rfc8174</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="RFC9190">[RFC9190]</dt>
+        <dd>
+<span class="refAuthor">Preuß Mattsson, J.</span> and <span class="refAuthor">M. Sethi</span>, <span class="refTitle">"EAP-TLS 1.3: Using the Extensible Authentication Protocol with TLS 1.3"</span>, <span class="seriesInfo">RFC 9190</span>, <span class="seriesInfo">DOI 10.17487/RFC9190</span>, <time datetime="2022-02" class="refDate">February 2022</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc9190">https://www.rfc-editor.org/rfc/rfc9190</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="RFC9427">[RFC9427]</dt>
+      <dd>
+<span class="refAuthor">DeKok, A.</span>, <span class="refTitle">"TLS-Based Extensible Authentication Protocol (EAP) Types for Use with TLS 1.3"</span>, <span class="seriesInfo">RFC 9427</span>, <span class="seriesInfo">DOI 10.17487/RFC9427</span>, <time datetime="2023-06" class="refDate">June 2023</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc9427">https://www.rfc-editor.org/rfc/rfc9427</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+</dl>
+</section>
+</div>
+<div id="sec-informative-references">
+<section id="section-10.2">
+        <h3 id="name-informative-references">
+<a href="#section-10.2" class="section-number selfRef">10.2. </a><a href="#name-informative-references" class="section-name selfRef">Informative References</a>
+        </h3>
+<dl class="references">
+<dt id="FIDO-CTAP2">[FIDO-CTAP2]</dt>
+        <dd>
+<span class="refAuthor">FIDO Alliance</span>, <span class="refTitle">"Client to Authenticator Protocol (CTAP)"</span>, <time datetime="2022-06-21" class="refDate">21 June 2022</time>, <span>&lt;<a href="https://fidoalliance.org/specs/fido-v2.1-ps-20210615/fido-client-to-authenticator-protocol-v2.1-ps-errata-20220621.html">https://fidoalliance.org/specs/fido-v2.1-ps-20210615/fido-client-to-authenticator-protocol-v2.1-ps-errata-20220621.html</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="FIDO-Glossary">[FIDO-Glossary]</dt>
+        <dd>
+<span class="refAuthor">FIDO Alliance</span>, <span class="refTitle">"FIDO Technical Glossary"</span>, <time datetime="2022-05-23" class="refDate">23 May 2022</time>, <span>&lt;<a href="https://fidoalliance.org/specs/common-specs/fido-glossary-v2.1-ps-20220523.html">https://fidoalliance.org/specs/common-specs/fido-glossary-v2.1-ps-20220523.html</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="FIDO-SecRef">[FIDO-SecRef]</dt>
+        <dd>
+<span class="refAuthor">FIDO Alliance</span>, <span class="refTitle">"FIDO Security Reference"</span>, <time datetime="2022-05-23" class="refDate">23 May 2022</time>, <span>&lt;<a href="https://fidoalliance.org/specs/common-specs/fido-security-ref-v2.1-ps-20220523.html">https://fidoalliance.org/specs/common-specs/fido-security-ref-v2.1-ps-20220523.html</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="IETF115-emu-minutes">[IETF115-emu-minutes]</dt>
+        <dd>
+<span class="refAuthor">IETF</span>, <span class="refTitle">"EMU @ IETF 115, Minutes"</span>, <time datetime="2022-11-07" class="refDate">7 November 2022</time>, <span>&lt;<a href="https://datatracker.ietf.org/meeting/115/materials/minutes-115-emu-202211071530-00">https://datatracker.ietf.org/meeting/115/materials/minutes-115-emu-202211071530-00</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="RFC3748">[RFC3748]</dt>
+        <dd>
+<span class="refAuthor">Aboba, B.</span>, <span class="refAuthor">Blunk, L.</span>, <span class="refAuthor">Vollbrecht, J.</span>, <span class="refAuthor">Carlson, J.</span>, and <span class="refAuthor">H. Levkowetz, Ed.</span>, <span class="refTitle">"Extensible Authentication Protocol (EAP)"</span>, <span class="seriesInfo">RFC 3748</span>, <span class="seriesInfo">DOI 10.17487/RFC3748</span>, <time datetime="2004-06" class="refDate">June 2004</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc3748">https://www.rfc-editor.org/rfc/rfc3748</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="RFC5281">[RFC5281]</dt>
+        <dd>
+<span class="refAuthor">Funk, P.</span> and <span class="refAuthor">S. Blake-Wilson</span>, <span class="refTitle">"Extensible Authentication Protocol Tunneled Transport Layer Security Authenticated Protocol Version 0 (EAP-TTLSv0)"</span>, <span class="seriesInfo">RFC 5281</span>, <span class="seriesInfo">DOI 10.17487/RFC5281</span>, <time datetime="2008-08" class="refDate">August 2008</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc5281">https://www.rfc-editor.org/rfc/rfc5281</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="RFC7942">[RFC7942]</dt>
+        <dd>
+<span class="refAuthor">Sheffer, Y.</span> and <span class="refAuthor">A. Farrel</span>, <span class="refTitle">"Improving Awareness of Running Code: The Implementation Status Section"</span>, <span class="seriesInfo">BCP 205</span>, <span class="seriesInfo">RFC 7942</span>, <span class="seriesInfo">DOI 10.17487/RFC7942</span>, <time datetime="2016-07" class="refDate">July 2016</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc7942">https://www.rfc-editor.org/rfc/rfc7942</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="WebAuthn">[WebAuthn]</dt>
+      <dd>
+<span class="refAuthor">World Wide Web Consortium</span>, <span class="refTitle">"Web Authentication: An API for accessing Public Key Credentials Level 2"</span>, <time datetime="2021-04-08" class="refDate">8 April 2021</time>, <span>&lt;<a href="https://www.w3.org/TR/2021/REC-webauthn-2-20210408/">https://www.w3.org/TR/2021/REC-webauthn-2-20210408/</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+</dl>
+</section>
+</div>
+</section>
+<div id="example-use-cases-and-protocol-flows">
+<section id="appendix-A">
+      <h2 id="name-example-use-cases-and-proto">
+<a href="#appendix-A" class="section-number selfRef">Appendix A. </a><a href="#name-example-use-cases-and-proto" class="section-name selfRef">Example use cases and protocol flows</a>
+      </h2>
+<div id="usecases_passkey_silent">
+<section id="appendix-A.1">
+        <h3 id="name-authentication-using-passke">
+<a href="#appendix-A.1" class="section-number selfRef">A.1. </a><a href="#name-authentication-using-passke" class="section-name selfRef">Authentication using Passkeys with silent authentication</a>
+        </h3>
+<p id="appendix-A.1-1">With this use case, the server will send an Authentication Request containing only the Relying Party Id attribute.<a href="#appendix-A.1-1" class="pilcrow">¶</a></p>
+<p id="appendix-A.1-2">The client can trigger the silent authentication with the Passkey stored on the FIDO authenticator and includes the response from the FIDO authenticator into the Authentication Response message.<a href="#appendix-A.1-2" class="pilcrow">¶</a></p>
+<p id="appendix-A.1-3">The server can look up the Public Key Identifier in its database, verify the FIDO signature with the stored public key and, if the signature was valid, send a protected success indicator to the client.
+The client responds with an acknowledgement and the server sends an EAP-Success<a href="#appendix-A.1-3" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="authentication-using-passkeys-with-silent-auth-for-wifi-and-uv-auth-for-vpn">
+<section id="appendix-A.2">
+        <h3 id="name-authentication-using-passkey">
+<a href="#appendix-A.2" class="section-number selfRef">A.2. </a><a href="#name-authentication-using-passkey" class="section-name selfRef">Authentication using Passkeys with silent auth for WiFi and uv auth for VPN</a>
+        </h3>
+<p id="appendix-A.2-1">With this use case, the server will modify the Authentication Request based on which RADIUS client (the Wifi Controller or the VPN appliance) sent the request.<a href="#appendix-A.2-1" class="pilcrow">¶</a></p>
+<p id="appendix-A.2-2">If the WiFi appliance sent the request, silent auth is used, and the flow is identical with the previous use case.<a href="#appendix-A.2-2" class="pilcrow">¶</a></p>
+<p id="appendix-A.2-3">If the request came from the VPN appliance (e.g. because the VPN is done via IPSEC with EAP), the server adds "uv" in the Authentication Requirements attribute, which triggers an UV action on the client's side.<a href="#appendix-A.2-3" class="pilcrow">¶</a></p>
+<p id="appendix-A.2-4">The client triggers the Passkey authentication with user verification and responds to the server with the authentication data. The server verifies the signature, sends a success indication, the client acknowledges and the server sends an EAP-Success.<a href="#appendix-A.2-4" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="authentication-with-non-residential-fido-keys">
+<section id="appendix-A.3">
+        <h3 id="name-authentication-with-non-res">
+<a href="#appendix-A.3" class="section-number selfRef">A.3. </a><a href="#name-authentication-with-non-res" class="section-name selfRef">Authentication with non-residential FIDO keys</a>
+        </h3>
+<p id="appendix-A.3-1">In this use case, the FIDO authenticator does not have a Passkey for the Relying Party ID. Instead, the server has a list of Public Key Identifiers stored for each username.<a href="#appendix-A.3-1" class="pilcrow">¶</a></p>
+<p id="appendix-A.3-2">After the initial Authentication Request from the server, the client does not have enough data to trigger the FIDO authentication, so it needs additional information.<a href="#appendix-A.3-2" class="pilcrow">¶</a></p>
+<p id="appendix-A.3-3">The client then sends an Information Request message with its username.<a href="#appendix-A.3-3" class="pilcrow">¶</a></p>
+<p id="appendix-A.3-4">The server looks up the username in its database and sends back a list of Public Key Identifiers it has stored for this user with an Information Response message.<a href="#appendix-A.3-4" class="pilcrow">¶</a></p>
+<p id="appendix-A.3-5">The client can now trigger the FIDO authentication with this list and responds with an Authentication Response, that includes the Public Key Identifier that was actually used for this FIDO authentication.<a href="#appendix-A.3-5" class="pilcrow">¶</a></p>
+<p id="appendix-A.3-6">The server can now verify the signature and client and server finalize the EAP method.<a href="#appendix-A.3-6" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="authentication-with-non-residential-fido-keys-and-user-specific-authentication-policies">
+<section id="appendix-A.4">
+        <h3 id="name-authentication-with-non-resi">
+<a href="#appendix-A.4" class="section-number selfRef">A.4. </a><a href="#name-authentication-with-non-resi" class="section-name selfRef">Authentication with non-residential FIDO keys and user-specific authentication policies</a>
+        </h3>
+<p id="appendix-A.4-1">In this use case, different users have different authentication policies, i.e. employees are allowed to use silent authentication, but administrators need an authentication with user presence.<a href="#appendix-A.4-1" class="pilcrow">¶</a></p>
+<p id="appendix-A.4-2">The server starts with an AuthenticationRequest and no authentication requirements or an empty array as authentication requirements.
+The client transmits its identity to the server in the Information Request message.
+Now the server looks up the user and their registered public key identifiers, and checks whether or not user presence verification is necessary.<a href="#appendix-A.4-2" class="pilcrow">¶</a></p>
+<p id="appendix-A.4-3">If it is necessary, the server includes an authentication requirements attribute with the "up" value along with the PKIDs in the Information Response message.
+Since the client discards any previous attribute values, it now performs a FIDO authentication with user presence, and responds to the server.<a href="#appendix-A.4-3" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="authentication-with-mandatory-verification-after-a-timespan">
+<section id="appendix-A.5">
+        <h3 id="name-authentication-with-mandato">
+<a href="#appendix-A.5" class="section-number selfRef">A.5. </a><a href="#name-authentication-with-mandato" class="section-name selfRef">Authentication with mandatory verification after a timespan</a>
+        </h3>
+<p id="appendix-A.5-1">It may be desired to force a user verification after a timespan, to ensure that the FIDO token is still in possession of the user.
+This timespan is specific for each token, so the check whether or not the token is still allowed to perform only silent authentication can only be done after the authentication has happened.<a href="#appendix-A.5-1" class="pilcrow">¶</a></p>
+<p id="appendix-A.5-2">Given, a user has two registered token, one was verified recently and the other exceeded the verification timespan.<a href="#appendix-A.5-2" class="pilcrow">¶</a></p>
+<p id="appendix-A.5-3">The server start with an authentication request, the client answers with an Information Request and the Identity, the server transmits the Information Response with the two PKIDs and the client performs the silent FIDO authentication with the "expired" FIDO token.
+After sending the Authentication Response, the server verifies the FIDO authentication and recognizes the expired FIDO token.
+Now the server sends a new Authentication Request with the PKID of the expired token and "uv" as Authentication Requirement.
+The client now performs the FIDO authentication again, this time with user verification and sends the Authentication Response to the server.
+The server stores the timestamp of the successful user verification in its database and sends the success indicator.<a href="#appendix-A.5-3" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="examples_2hgracetime">
+<section id="appendix-A.6">
+        <h3 id="name-authentication-with-mandator">
+<a href="#appendix-A.6" class="section-number selfRef">A.6. </a><a href="#name-authentication-with-mandator" class="section-name selfRef">Authentication with mandatory verification after a timespan with a grace period</a>
+        </h3>
+<p id="appendix-A.6-1">As with the previous example, in this case the FIDO token again have a token-specific timeout to allow silent authentication for a period of time after a successful user verification.
+Unlike in the previous example, this time there is a grace period that still allows a silent authentication for a while after the timer expired.
+The intention is to not kick out the user in the moment the timer expires, i.e. a user is currently not in the vicinity of the device at that time, but one would not want to kick out the user if it needs to reconnect due to poor wifi performance.
+Instead, the user may choose a convinient time to verify their identity/presence within this grace period.<a href="#appendix-A.6-1" class="pilcrow">¶</a></p>
+<p id="appendix-A.6-2">The protocol flow is the same as the previous example, but this time the second Authentication Request from the server cannot be answered from the client, since the user is not performing the user verification.
+Instead, the client will send an Error message with error code TODO (FIDO authentication Timeout).<a href="#appendix-A.6-2" class="pilcrow">¶</a></p>
+<p id="appendix-A.6-3">The server can now decide whether or not the silent authentication is still acceptable.
+If it is, meaning that the timeout for silent authentication has expired, but it is still in the grace period, it answers with a Success Indicator.
+If not, meaning that the grace period has expired too, the server will send a Failure Indicator with the appropriate error code.<a href="#appendix-A.6-3" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="fa-authentication-with-client-certificate-on-tls-layer-and-fido-in-the-inner-authentication">
+<section id="appendix-A.7">
+        <h3 id="name-2fa-authentication-with-cli">
+<a href="#appendix-A.7" class="section-number selfRef">A.7. </a><a href="#name-2fa-authentication-with-cli" class="section-name selfRef">2FA-AUthentication with client certificate on TLS layer and FIDO in the inner authentication</a>
+        </h3>
+<p id="appendix-A.7-1">Since EAP-FIDO uses TLS, it is possible to perform two-factor authentication directly with only EAP-FIDO.
+In this case, the client and server perform mutual authentication at the TLS layer.<a href="#appendix-A.7-1" class="pilcrow">¶</a></p>
+<p id="appendix-A.7-2">The server can now determine the identity of the user based on the certificate and already look up the stored Public Key Identifiers.
+With this lookup, the server can already include the PKIDs in the Authentication Request.
+The client doesn't need to send an Information Request, since it already has all information.
+It can immediately perform the FIDO authentication process and send the Authentication Response to the server.<a href="#appendix-A.7-2" class="pilcrow">¶</a></p>
+</section>
+</div>
+</section>
+</div>
+<div id="open-questions-regarding-protocol-design">
+<section id="appendix-B">
+      <h2 id="name-open-questions-regarding-pr">
+<a href="#appendix-B" class="section-number selfRef">Appendix B. </a><a href="#name-open-questions-regarding-pr" class="section-name selfRef">Open Questions regarding Protocol design</a>
+      </h2>
+<p id="appendix-B-1">Note to RFC Editor: Remove this section and all references from this section before publication.<a href="#appendix-B-1" class="pilcrow">¶</a></p>
+<p id="appendix-B-2">Since this specification is an early draft, there are a lot of open questions that we want to get community feedback on.<a href="#appendix-B-2" class="pilcrow">¶</a></p>
+<div id="openquestions_rpid">
+<section id="appendix-B.1">
+        <h3 id="name-how-to-determine-the-fido-r">
+<a href="#appendix-B.1" class="section-number selfRef">B.1. </a><a href="#name-how-to-determine-the-fido-r" class="section-name selfRef">How to determine the FIDO Relying Party ID?</a>
+        </h3>
+<p id="appendix-B.1-1">FIDO needs a relying party ID to function.
+The question is how this RPID is determined and verified, there are several options that all have pros and cons.<a href="#appendix-B.1-1" class="pilcrow">¶</a></p>
+<p id="appendix-B.1-2">The main thing is to have in mind, that there are three relevant parameters, that need to be put into a certain relationship:<a href="#appendix-B.1-2" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="appendix-B.1-3.1">
+            <p id="appendix-B.1-3.1.1">the RADIUS realm (i.e. 'anonymous@dfn.de')<a href="#appendix-B.1-3.1.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="appendix-B.1-3.2">
+            <p id="appendix-B.1-3.2.1">the RPID (i.e. 'eduroam.dfn.de')<a href="#appendix-B.1-3.2.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="appendix-B.1-3.3">
+            <p id="appendix-B.1-3.3.1">the Server Certificate Name (usually subjectAltName:DNS, i.e. 'radius.eduroam.dfn.de', in the following abbreviated simply with SAN)<a href="#appendix-B.1-3.3.1" class="pilcrow">¶</a></p>
+</li>
+        </ul>
+<p id="appendix-B.1-4">All these three parameters need to be in a pre-defined relationship to allow a simple and hard-to-mess-up-and-still-secure configuration.
+Both the client and the server have to agree on what the RPID is, in order for the FIDO authentication to succeed.
+If there is a defined relationship between the RPID and the certificate name (i.e. SAN needs to be a subrealm of the RPID), then the client needs to verify the certificate against exactly that.
+When does the client do that? What security implications does that bring?
+All these options need some thought.<a href="#appendix-B.1-4" class="pilcrow">¶</a></p>
+<div id="option-1-configuration">
+<section id="appendix-B.1.1">
+          <h4 id="name-option-1-configuration">
+<a href="#appendix-B.1.1" class="section-number selfRef">B.1.1. </a><a href="#name-option-1-configuration" class="section-name selfRef">Option 1: Configuration</a>
+          </h4>
+<p id="appendix-B.1.1-1">The first option would be to just have the RPID as a configuration item, maybe with a default on the realm of the outer username.
+Adding a configuration option complicates the setup of the EAP method, but hopefully not too much.
+A misconfiguration of the RPID is also not that critical from a security standpoint.
+The effects of a misconfigured RPID are only a problem if the used FIDO key is also registered with a third party, in which case the third party could trick the client to connect to a bogous network.<a href="#appendix-B.1.1-1" class="pilcrow">¶</a></p>
+<p id="appendix-B.1.1-2">If the RPID deviates from the realm, the client could send the requested RPID using Server Name Indication.<a href="#appendix-B.1.1-2" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="option-2-mandate-rpid-to-equal-realm-of-the-username">
+<section id="appendix-B.1.2">
+          <h4 id="name-option-2-mandate-rpid-to-eq">
+<a href="#appendix-B.1.2" class="section-number selfRef">B.1.2. </a><a href="#name-option-2-mandate-rpid-to-eq" class="section-name selfRef">Option 2: Mandate RPID to equal Realm of the Username</a>
+          </h4>
+<p id="appendix-B.1.2-1">The second option would be to mandate that the RPID is equal to the realm portion of the username.
+This restricts options on how to use EAP-FIDO and may cause unnecessary difficulties in routing, if the convinient routing domain (e.g. the registered domain for a company) should not be used as RPID due to security concerns, or different RPIDs should be used under the same routing realm.<a href="#appendix-B.1.2-1" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="option-3-rpid-is-determined-by-the-server-and-sent-before-the-tls-handshake">
+<section id="appendix-B.1.3">
+          <h4 id="name-option-3-rpid-is-determined">
+<a href="#appendix-B.1.3" class="section-number selfRef">B.1.3. </a><a href="#name-option-3-rpid-is-determined" class="section-name selfRef">Option 3: RPID is determined by the server and sent before the TLS handshake</a>
+          </h4>
+<p id="appendix-B.1.3-1">Since the RPID plays an important role in the decision whether or not the certificate sent by the server is to be trusted, the RPID should be determined before the TLS handshake.
+The server could determine the RPID based on the outer username and send it as payload in the EAP-TLS Start packet.
+This way, the client has a clear indication as to whether or not to trust the server certificate sent in the subsequent TLS handshake.<a href="#appendix-B.1.3-1" class="pilcrow">¶</a></p>
+<p id="appendix-B.1.3-2">However, this opens up some security issues that are yet to be investigated, since the RPID could be modified by an on-path attacker.<a href="#appendix-B.1.3-2" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="option-4-rpid-is-determined-by-the-server-and-sent-after-the-tls-handshake">
+<section id="appendix-B.1.4">
+          <h4 id="name-option-4-rpid-is-determined">
+<a href="#appendix-B.1.4" class="section-number selfRef">B.1.4. </a><a href="#name-option-4-rpid-is-determined" class="section-name selfRef">Option 4: RPID is determined by the server and sent after the TLS handshake</a>
+          </h4>
+<p id="appendix-B.1.4-1">With this option, the problem is that the client needs to cache the server certificate in order to determine if the RPID is valid. for the given certificate, unless the rules for certificate verification and RPID determination specify it otherwise.
+One possibility to circumvent this would be to allow the server certificate names and the RPID to deviate, but validate both against the realm of the outer username, e.g. a realm of example.com with a server certificate for radius.example.com and the FIDO RPID fido.example.com.<a href="#appendix-B.1.4-1" class="pilcrow">¶</a></p>
+<p id="appendix-B.1.4-2">This, however, adds a whole lot more of security concerns, especially in environments with different independent devisions under the same domain suffix.<a href="#appendix-B.1.4-2" class="pilcrow">¶</a></p>
+</section>
+</div>
+</section>
+</div>
+<div id="missing-features">
+<section id="appendix-B.2">
+        <h3 id="name-missing-features">
+<a href="#appendix-B.2" class="section-number selfRef">B.2. </a><a href="#name-missing-features" class="section-name selfRef">Missing Features</a>
+        </h3>
+<p id="appendix-B.2-1">There are a lot of features, that have been brought up by several people at several occations.
+This EAP method could include spec to address these problems.
+Also there may be FIDO-specific things that are not part of this specification.<a href="#appendix-B.2-1" class="pilcrow">¶</a></p>
+<div id="deprovisioning-of-eap-configuration">
+<section id="appendix-B.2.1">
+          <h4 id="name-deprovisioning-of-eap-confi">
+<a href="#appendix-B.2.1" class="section-number selfRef">B.2.1. </a><a href="#name-deprovisioning-of-eap-confi" class="section-name selfRef">Deprovisioning of EAP configuration</a>
+          </h4>
+<p id="appendix-B.2.1-1">It may be useful to directly include a way to signal in-band that an EAP configuration should be deleted.<a href="#appendix-B.2.1-1" class="pilcrow">¶</a></p>
+<p id="appendix-B.2.1-2">The idea stems from the discussion at IETF 115 about EAP-DIE <span>[<a href="#IETF115-emu-minutes" class="cite xref">IETF115-emu-minutes</a>]</span>.<a href="#appendix-B.2.1-2" class="pilcrow">¶</a></p>
+<p id="appendix-B.2.1-3">With EAP-FIDO it may be desirable to also allow for deletion of persistent credentials/Passkeys.<a href="#appendix-B.2.1-3" class="pilcrow">¶</a></p>
+<p id="appendix-B.2.1-4">Input on the need and specific way to achieve this is welcome.<a href="#appendix-B.2.1-4" class="pilcrow">¶</a></p>
+</section>
+</div>
+</section>
+</div>
+</section>
+</div>
+<div id="document-status">
+<section id="appendix-C">
+      <h2 id="name-document-status">
+<a href="#appendix-C" class="section-number selfRef">Appendix C. </a><a href="#name-document-status" class="section-name selfRef">Document Status</a>
+      </h2>
+<p id="appendix-C-1">Note to RFC Editor: Remove this section before publication.<a href="#appendix-C-1" class="pilcrow">¶</a></p>
+<div id="change-history">
+<section id="appendix-C.1">
+        <h3 id="name-change-history">
+<a href="#appendix-C.1" class="section-number selfRef">C.1. </a><a href="#name-change-history" class="section-name selfRef">Change History</a>
+        </h3>
+<p id="appendix-C.1-1">-00: Initial draft version<a href="#appendix-C.1-1" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="missing-specs">
+<section id="appendix-C.2">
+        <h3 id="name-missing-specs">
+<a href="#appendix-C.2" class="section-number selfRef">C.2. </a><a href="#name-missing-specs" class="section-name selfRef">Missing Specs</a>
+        </h3>
+<ul class="normal">
+<li class="normal" id="appendix-C.2-1.1">
+            <p id="appendix-C.2-1.1.1">Error codes and Error handling<a href="#appendix-C.2-1.1.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="appendix-C.2-1.2">
+            <p id="appendix-C.2-1.2.1">Key derivation for i.e. WPA2<a href="#appendix-C.2-1.2.1" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="appendix-C.2-1.2.2.1">
+                <p id="appendix-C.2-1.2.2.1.1">Will be exported from TLS layer, maybe include some information from the FIDO exchange to bind it to the FIDO exchange?<a href="#appendix-C.2-1.2.2.1.1" class="pilcrow">¶</a></p>
+</li>
+            </ul>
+</li>
+        </ul>
+</section>
+</div>
+</section>
+</div>
+<div id="acknowledgments">
+<section id="appendix-D">
+      <h2 id="name-acknowledgments">
+<a href="#name-acknowledgments" class="section-name selfRef">Acknowledgments</a>
+      </h2>
+<p id="appendix-D-1">TODO acknowledge.<a href="#appendix-D-1" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="authors-addresses">
+<section id="appendix-E">
+      <h2 id="name-authors-addresses">
+<a href="#name-authors-addresses" class="section-name selfRef">Authors' Addresses</a>
+      </h2>
+<address class="vcard">
+        <div dir="auto" class="left"><span class="fn nameRole">Jan-Frederik Rieckers</span></div>
+<div dir="auto" class="left"><span class="org">Deutsches Forschungsnetz | German National Research and Education Network</span></div>
+<div dir="auto" class="left"><span class="street-address">Alexanderplatz 1</span></div>
+<div dir="auto" class="left">
+<span class="postal-code">10178</span> <span class="locality">Berlin</span>
+</div>
+<div dir="auto" class="left"><span class="country-name">Germany</span></div>
+<div class="email">
+<span>Email:</span>
+<a href="mailto:rieckers@dfn.de" class="email">rieckers@dfn.de</a>
+</div>
+<div class="url">
+<span>URI:</span>
+<a href="www.dfn.de" class="url">www.dfn.de</a>
+</div>
+</address>
+<address class="vcard">
+        <div dir="auto" class="left"><span class="fn nameRole">Stefan Winter</span></div>
+<div dir="auto" class="left"><span class="org">Fondation Restena | Restena Foundation</span></div>
+<div dir="auto" class="left"><span class="street-address">2, avenue de l'Université</span></div>
+<div dir="auto" class="left">L-<span class="postal-code">4365</span> <span class="locality">Esch-sur-Alzette</span>
+</div>
+<div dir="auto" class="left"><span class="country-name">Luxembourg</span></div>
+<div class="email">
+<span>Email:</span>
+<a href="mailto:stefan.winter@restena.lu" class="email">stefan.winter@restena.lu</a>
+</div>
+<div class="url">
+<span>URI:</span>
+<a href="www.restena.lu" class="url">www.restena.lu</a>
+</div>
+</address>
+</section>
+</div>
+<script>const toc = document.getElementById("toc");
+toc.querySelector("h2").addEventListener("click", e => {
+  toc.classList.toggle("active");
+});
+toc.querySelector("nav").addEventListener("click", e => {
+  toc.classList.remove("active");
+});
+</script>
+</body>
+</html>
