@@ -154,7 +154,7 @@ If only the minimum configuration option is provided to the EAP supplicant, the 
 
 ### Inference rules ###
 
-* [SNAME] TLS Server Certificate name: append "eap-fido-authentication." to [REALM]
+* [SNAME] TLS Server Certificate name: prepend "eap-fido-authentication." to [REALM]
 * [RP-ID] CTAP Relying Party ID (RPID): acceptable values for RPID is the set containing:
   - [REALM]
   - the registrable suffix of [REALM], if any 
