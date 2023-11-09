@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2023-11-07T00:59:07.395894+00:00",
+  "timestamp": "2023-11-09T00:58:25.724212+00:00",
   "repo": "Janfred/draft-janfred-eap-fido",
   "labels": [
     {
@@ -63,13 +63,13 @@
       "labels": [],
       "body": "\u2026e, FIDO2 scope\r\n\r\nparticularly the validations done when either implicitly deriving from realm vs. actual config",
       "createdAt": "2023-10-18T12:19:44Z",
-      "updatedAt": "2023-11-06T16:38:26Z",
+      "updatedAt": "2023-11-08T08:02:51Z",
       "baseRepository": "Janfred/draft-janfred-eap-fido",
       "baseRefName": "main",
       "baseRefOid": "b676212e1b7ece723f932551f48b3f8afbb2056e",
       "headRepository": "Janfred/draft-janfred-eap-fido",
       "headRefName": "restena-sw-patch-1",
-      "headRefOid": "461272d4a395562136527b804b4c34b0c0327c59",
+      "headRefOid": "d48fc7e01e4b2153d68d149a1ebbe7856707e7bf",
       "closedAt": null,
       "mergedAt": null,
       "mergedBy": null,
