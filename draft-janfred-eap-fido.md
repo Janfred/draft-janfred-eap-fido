@@ -145,14 +145,15 @@ In order to successfully perform an EAP-FIDO authentication, the server and the 
 
 EAP-FIDO assumes that the FIDO authenticator is already registered with the server, that is, the EAP-FIDO server has access to the public key used to verify the authenticator's response as well as the corresponding credential id.
 
+### EAP supplicant: Required configuration items
+
 On the client side, the supplicant must be configured as follows. There is a minimum of exactly one configuration items, and a set of "advanced options". 
 
 If only the minimum configuration option is provided to the EAP supplicant, the supplicant infers the remainder of the options. For almost all deployments, this minimal configuration should be sufficient for an easy onboarding experience and secure operation.
 
-### Required Configuration items
 * [REALM] a routing ID (see {{openquestions_rpid}}) - i.e. "the RADIUS realm". This is typically the deployer's own domain name.
 
-### Inference rules ###
+#### Inference rules
 
 * [SNAME] TLS Server Certificate name: prepend "eap-fido-authentication." to [REALM]
 * [RP-ID] CTAP Relying Party ID (RPID): acceptable values for RPID is the set containing:
@@ -161,11 +162,26 @@ If only the minimum configuration option is provided to the EAP supplicant, the 
 * [STORE] The default Root CA certificate trust store is the system-wide root CA store for web browser certificate validation ("WebPKI"). For this inferred default to be appropriate, the server certificate needs to be issued by a root CA which is present in that store.
 
 
-### Optional Configuration items
+#### Optional Configuration items
 * [UNAME] the username to authenticate as (required only if the registered FIDO credential is not a discoverable credential)
 * [SNAME] the expectedsubjectAltName:DNS for the TLS certificate of the server (required only if the inference rules of the TLS certificate server need to be overwritten for this deployment)
 * [RP-ID] a set with exactly one member - the exact RPID for the EAP-FIDO authentication ceremony (required only if the inference rules for the RPID need to be overwritten for this deployment)
 * [STORE] a dedicated store for the specific purpose of EAP-FIDO server validation. This CA certificate trust store MUST NOT be empty (required only if the server certificate is not issued by a root CA present in the client's system-wide store; or if the large number of CA certificates in the system-wide CA store is considered too insecure by the deployment administrator)
+
+#### Client Configuration UX Guidelines
+
+User Interfaces for the supplicant configuration should expose as little configuration elements as possible to the end user. For any given network to be configured with EAP-FIDO, a configuration dialog should ideally ask only for [REALM], hiding the optional configuration options [RP-ID], [SNAME], [STORE] behind an initially collapsed "Advanced Configuration" UI element.
+
+To further help the user in selecting useful values for [REALM], the supplicant should enumerate the list of all Relying Party IDs of existing Discoverable Credentials on all available FIDO tokens in a drop-down list as candidates for [REALM]. The user should always be given a possibility to select a different value not in the list (e.g. in case that there are discoverable credentials on the system, but the particular credential to use for the EAP authentication at hand is not among those).
+
+### EAP server: Required configuration items
+
+The EAP server needs to be configured correctly to validate authentication requests from the EAP peer. Its configuration includes:
+* [SRPID] the Relying Party ID of the deployment, identical to one of the entries in [RP-ID]
+* [SCERT] an X.509 certificate from a CA recognised by the client's [STORE] and a name of [SNAME] (which defaults to "eap-fido-authentication.[REALM])
+* [DATAB] access to the database of valid FIDO tokens for this [SRPID]. The following elements need to be accessible:
+  - (readonly) list of tuple (username, PKID, PK, registration_up_uv)
+  - (read-write) transaction counter for each PKID (this counter needs to be incremented after each transaction to support CTAP's physical-object-cloning protection)
 
 ## TLS handshake phase
 
