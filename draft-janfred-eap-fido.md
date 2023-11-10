@@ -679,4 +679,4 @@ Note to RFC Editor: Remove this section before publication.
 # Acknowledgments
 {:numbered="false"}
 
-TODO acknowledge.
+The document authors thank Alexander Clouter for the idea of a default authentication server name.
