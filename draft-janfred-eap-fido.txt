@@ -77,7 +77,7 @@ Table of Contents
        4.2.5.  TLS Server Certificate Verification
      4.3.  FIDO-exchange
        4.3.1.  Message format
-       4.3.2.  Potocol Sequence
+       4.3.2.  Protocol Sequence
      4.4.  FIDO authentication
    5.  Implementation Guidelines
    6.  Design decisions
@@ -104,7 +104,7 @@ Table of Contents
      A.5.  Authentication with mandatory verification after a timespan
      A.6.  Authentication with mandatory verification after a timespan
            with a grace period
-     A.7.  2FA-AUthentication with client certificate on TLS layer and
+     A.7.  2FA-Authentication with client certificate on TLS layer and
            FIDO in the inner authentication
    Appendix B.  Open Questions regarding Protocol design
      B.1.  How to determine the FIDO Relying Party ID?
@@ -119,7 +119,7 @@ Table of Contents
    Appendix C.  Document Status
      C.1.  Change History
      C.2.  Missing Specs
-   Acknowledgments
+   Acknowledgements
    Authors' Addresses
 
 1.  Introduction
@@ -165,7 +165,7 @@ Table of Contents
 
    The second major issue is the missing implicit derivation regarding
    certificate validation.  With EAP-FIDO, the supplicants now have a
-   clear specification on how to decide wether or not a server
+   clear specification on how to decide whether or not a server
    certificate is considered valid for the current authentication flow.
    This is achieved by using the trust anchors available on most devices
    and a method to determine the valid server name based on implicit
@@ -187,7 +187,7 @@ Table of Contents
 
    FIDO Authenticator:  Authenticator as specified by [WebAuthn],
       Section 4: a cryptographic entity, existing in hardware or
-      software, that can register and later assert possesion of the
+      software, that can register and later assert possession of the
       registered key credential.
 
    Discoverable Credential:  a public key credential source that is
@@ -232,7 +232,7 @@ Table of Contents
 
 3.2.  FIDO-exchange phase
 
-   In this phase, the TLS record layer is used to securily tunnel
+   In this phase, the TLS record layer is used to securely tunnel
    information between the EAP-FIDO client and EAP-FIDO server.
 
    For the FIDO-exchange phase, the client has two options, depending on
@@ -317,7 +317,7 @@ Table of Contents
 
    Each EAP-FIDO message contains a single leg of a half-duplex
    conversation.  Since EAP carrier protocols may constrain the length
-   of an EAP message, it may be neccessary to fragment an EAP-FIDO
+   of an EAP message, it may be necessary to fragment an EAP-FIDO
    message across multiple EAP messages.
 
    The fragmentation method is described in [RFC5216], Section 2.1.5.
@@ -443,7 +443,7 @@ Table of Contents
 
    This message is the protected success indicator, as required by
    [RFC9427], Section 5.2.  It is sent by the server to indicate a
-   successfull authentication.  Since EAP is a strict request-response
+   successful authentication.  Since EAP is a strict request-response
    based protocol, the client needs to reply to this message, so the
    server can send an EAP-Success message.  The client will acknowledge
    the reception of this packet through the acknowledgement mechanism in
@@ -555,7 +555,7 @@ Table of Contents
 
    The Error message signals an error condition and can be sent both
    from client to server and vice versa.  This error condition does not
-   neccessarily lead to an authentication failure, since the EAP-FIDO
+   necessarily lead to an authentication failure, since the EAP-FIDO
    server may decide that the previous authentication is sufficient.
    (See Appendix A.6 for an example for this use case)
 
@@ -563,7 +563,7 @@ Table of Contents
    error code describing the error and MAY contain an Error Description
    attribute with a human-readable error description.
 
-4.3.2.  Potocol Sequence
+4.3.2.  Protocol Sequence
 
    The FIDO exchange phase starts with the server sending an
    authentication request to the client.  This message is sent along
@@ -587,7 +587,7 @@ Table of Contents
    If the client needs additional information, i.e. because it uses
    Server-Side Credentials and therefore needs a list of Credential IDs,
    the client sends an information request to the server, which includes
-   additional information from client to help the server to fulfil the
+   additional information from client to help the server to fulfill the
    information request.  In the current specification, this is namely an
    identifier, from which the EAP-FIDO server can perform a lookup for
    all registered FIDO credentials registered to this identifier.
@@ -600,11 +600,11 @@ Table of Contents
    updated authentication requirements, are then sent with the
    Information Response back to the client.
 
-   The client can now, with the additonal information in the Information
-   Response message, perform the FIDO authentication.  The result of the
-   FIDO authentication is then sent to the Server in an Authentication
-   Response message, which includes the PKID, Auth Data and FIDO
-   Signature from the FIDO authentication result.
+   The client can now, with the additional information in the
+   Information Response message, perform the FIDO authentication.  The
+   result of the FIDO authentication is then sent to the Server in an
+   Authentication Response message, which includes the PKID, Auth Data
+   and FIDO Signature from the FIDO authentication result.
 
    When a server receives an Authentication Response message, it
    validates the FIDO data.  If the FIDO authentication is successful
@@ -671,11 +671,11 @@ Table of Contents
 
    The FIDO CTAP protocol has distinct primitives for the registration
    and the usage of a FIDO2 credential.  This specification requires
-   that the registratrion of the security token has been done out-of-
+   that the registration of the security token has been done out-of-
    band, for example using the WebAuthn protocol in a browser context.
 
    There are multiple degrees of freedom when registering a token with
-   CTAP version 2.  This specification recognises the following choices
+   CTAP version 2.  This specification recognizes the following choices
    at registration time, and defines how to effectuate an authentication
    transaction for any combination of these choices.
 
@@ -683,9 +683,9 @@ Table of Contents
 
    FIDO2 tokens contain a master key which never leaves the security
    perimeter of the token.  FIDO2 tokens transact by generating
-   asymetric keypairs which are bound to a scope (often: a domain name,
+   asymmetric keypairs which are bound to a scope (often: a domain name,
    a RADIUS realm).  The scoped keying material can be accessed using
-   two diferent methods:
+   two different methods:
 
    *  Server-Side Credentials: The keying material is not accessible
       directly, but only by providing a Credential ID that was generated
@@ -715,15 +715,23 @@ Table of Contents
    EAP-FIDO supports both Discoverable and Server-Side Credentials.
 
    Registering a Discoverable Credential has several advantages and one
-   disadvantage: * No username needs to be sent during the
-   authentication transaction * The transaction requires less round-
-   trips due to skipping the username transmission process * The amount
-   of data sent from EAP server to EAP peer is significantly smaller,
-   reducing the probability of extra roundtrips or packet fragmentation
-   * The scopes of the stored credentials can be seen and enumerated by
-   the EAP supplicant, helping the user in finding the right value for
-   configuring the EAP realm * The Discoverable Credential consumes
-   space on the FIDO Authenticator, which might be limited
+   disadvantage:
+
+   *  No username needs to be sent during the authentication transaction
+
+   *  The transaction requires less round-trips due to skipping the
+      username transmission process
+
+   *  The amount of data sent from EAP server to EAP peer is
+      significantly smaller, reducing the probability of extra
+      roundtrips or packet fragmentation
+
+   *  The scopes of the stored credentials can be seen and enumerated by
+      the EAP supplicant, helping the user in finding the right value
+      for configuring the EAP realm
+
+   *  The Discoverable Credential consumes space on the FIDO
+      Authenticator, which might be limited
 
 6.1.2.  User involvement during registration
 
@@ -797,19 +805,19 @@ Table of Contents
    a means to validate the server certificate using implicit
    configuration options.  Using EAP-TTLS or EAP-PEAP would counteract
    this goal, since in most supplicants the configuration for the
-   different phases of the tunneled TLS methods is done seperately, so
+   different phases of the tunneled TLS methods is done separately, so
    the users would have to configure the certificate check parameters
    manually again.  Additionally, not every supplicant application may
    allow the code for the phase 2 exchange to access information about
    the phase 1 exchange, namely the server certificate parameters, which
-   is neccessary for the security of the EAP-FIDO exchange.  Specifying
+   is necessary for the security of the EAP-FIDO exchange.  Specifying
    EAP-FIDO as standalone EAP methods could therefore require modifying
    the EAP stack.  Implementers might be tempted to re-use the insecure
    and error-prone configuration interfaces.  To prevent this from the
    start, EAP-FIDO specifies an EAP-TLS based EAP method that cannot be
    used standalone.
 
-   Although this requires protentially duplicate code for supplicants
+   Although this requires potentially duplicate code for supplicants
    that support multiple EAP-TLS based methods, the authors believe this
    means of specification to be more resistant against implementation
    errors and prevent error-prone user interfaces.
@@ -1010,8 +1018,8 @@ A.4.  Authentication with Server-Side Credentials and user-specific
    requirements or an empty array as authentication requirements.  The
    client transmits its identity to the server in the Information
    Request message.  Now the server looks up the user and their
-   registered Credential IDCredential IDss, and checks whether or not
-   user presence verification is necessary.
+   registered Credential IDs, and checks whether or not user presence
+   verification is necessary.
 
    If it is necessary, the server includes an authentication
    requirements attribute with the "up" value along with the PKIDs in
@@ -1070,7 +1078,7 @@ A.6.  Authentication with mandatory verification after a timespan with a
    period has expired too, the server will send a Failure Indicator with
    the appropriate error code.
 
-A.7.  2FA-AUthentication with client certificate on TLS layer and FIDO
+A.7.  2FA-Authentication with client certificate on TLS layer and FIDO
       in the inner authentication
 
    Since EAP-FIDO uses TLS, it is possible to perform two-factor
@@ -1139,7 +1147,7 @@ B.1.2.  Option 2: Mandate RPID to equal Realm of the Username
    The second option would be to mandate that the RPID is equal to the
    realm portion of the username.  This restricts options on how to use
    EAP-FIDO and may cause unnecessary difficulties in routing, if the
-   convinient routing domain (e.g. the registered domain for a company)
+   convenient routing domain (e.g. the registered domain for a company)
    should not be used as RPID due to security concerns, or different
    RPIDs should be used under the same routing realm.
 
@@ -1171,13 +1179,13 @@ B.1.4.  Option 4: RPID is determined by the server and sent after the
    radius.example.com and the FIDO RPID fido.example.com.
 
    This, however, adds a whole lot more of security concerns, especially
-   in environments with different independent devisions under the same
+   in environments with different independent divisions under the same
    domain suffix.
 
 B.2.  Missing Features
 
    There are a lot of features, that have been brought up by several
-   people at several occations.  This EAP method could include spec to
+   people at several occasions.  This EAP method could include spec to
    address these problems.  Also there may be FIDO-specific things that
    are not part of this specification.
 
@@ -1209,6 +1217,8 @@ C.1.  Change History
 
       -  Updated terminology to align with the FIDO/WebAuthn terminology
 
+      -  Reword introduction
+
 C.2.  Missing Specs
 
    *  Error codes and Error handling
@@ -1218,7 +1228,7 @@ C.2.  Missing Specs
       -  Will be exported from TLS layer, maybe include some information
          from the FIDO exchange to bind it to the FIDO exchange?
 
-Acknowledgments
+Acknowledgements
 
    The document authors want to thank Alexander Clouter for the idea of
    a default authentication server name.

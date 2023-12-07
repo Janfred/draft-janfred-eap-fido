@@ -1180,7 +1180,7 @@ svg :is([fill="white"], [fill^="#fff"]) {
                     <p id="section-toc.1-1.4.2.3.2.1.1"><a href="#section-4.3.1" class="auto internal xref">4.3.1</a>.  <a href="#name-message-format" class="internal xref">Message format</a></p>
 </li>
                   <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.4.2.3.2.2">
-                    <p id="section-toc.1-1.4.2.3.2.2.1"><a href="#section-4.3.2" class="auto internal xref">4.3.2</a>.  <a href="#name-potocol-sequence" class="internal xref">Potocol Sequence</a></p>
+                    <p id="section-toc.1-1.4.2.3.2.2.1"><a href="#section-4.3.2" class="auto internal xref">4.3.2</a>.  <a href="#name-protocol-sequence" class="internal xref">Protocol Sequence</a></p>
 </li>
                 </ul>
 </li>
@@ -1256,7 +1256,7 @@ svg :is([fill="white"], [fill^="#fff"]) {
                 <p id="section-toc.1-1.11.2.6.1"><a href="#appendix-A.6" class="auto internal xref">A.6</a>.  <a href="#name-authentication-with-mandator" class="internal xref">Authentication with mandatory verification after a timespan with a grace period</a></p>
 </li>
               <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.11.2.7">
-                <p id="section-toc.1-1.11.2.7.1"><a href="#appendix-A.7" class="auto internal xref">A.7</a>.  <a href="#name-2fa-authentication-with-cli" class="internal xref">2FA-AUthentication with client certificate on TLS layer and FIDO in the inner authentication</a></p>
+                <p id="section-toc.1-1.11.2.7.1"><a href="#appendix-A.7" class="auto internal xref">A.7</a>.  <a href="#name-2fa-authentication-with-cli" class="internal xref">2FA-Authentication with client certificate on TLS layer and FIDO in the inner authentication</a></p>
 </li>
             </ul>
 </li>
@@ -1302,7 +1302,7 @@ svg :is([fill="white"], [fill^="#fff"]) {
             </ul>
 </li>
           <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.14">
-            <p id="section-toc.1-1.14.1"><a href="#appendix-D" class="auto internal xref"></a><a href="#name-acknowledgments" class="internal xref">Acknowledgments</a></p>
+            <p id="section-toc.1-1.14.1"><a href="#appendix-D" class="auto internal xref"></a><a href="#name-acknowledgements" class="internal xref">Acknowledgements</a></p>
 </li>
           <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.15">
             <p id="section-toc.1-1.15.1"><a href="#appendix-E" class="auto internal xref"></a><a href="#name-authors-addresses" class="internal xref">Authors' Addresses</a></p>
@@ -1334,7 +1334,7 @@ If an attacker observes this exchange, they can impersonate the user at any time
 Therefore, this specification uses FIDO authentication, which is based on asymmetric cryptography.
 With this method, even if an attacker is able to compromise the TLS connection, they cannot impersonate the user based on the observed data.<a href="#section-1-4" class="pilcrow">¶</a></p>
 <p id="section-1-5">The second major issue is the missing implicit derivation regarding certificate validation.
-With EAP-FIDO, the supplicants now have a clear specification on how to decide wether or not a server certificate is considered valid for the current authentication flow.
+With EAP-FIDO, the supplicants now have a clear specification on how to decide whether or not a server certificate is considered valid for the current authentication flow.
 This is achieved by using the trust anchors available on most devices and a method to determine the valid server name based on implicit information of the authentication configuration.<a href="#section-1-5" class="pilcrow">¶</a></p>
 </section>
 </div>
@@ -1353,7 +1353,7 @@ These terms will always be capitalized as shown here.<a href="#section-2-2" clas
 <span class="break"></span><dl class="dlParallel" id="section-2-3">
         <dt id="section-2-3.1">FIDO Authenticator:</dt>
         <dd style="margin-left: 1.5em" id="section-2-3.2">
-          <p id="section-2-3.2.1">Authenticator as specified by <span>[<a href="#WebAuthn" class="cite xref">WebAuthn</a>]</span>, Section 4: a cryptographic entity, existing in hardware or software, that can register and later assert possesion of the registered key credential.<a href="#section-2-3.2.1" class="pilcrow">¶</a></p>
+          <p id="section-2-3.2.1">Authenticator as specified by <span>[<a href="#WebAuthn" class="cite xref">WebAuthn</a>]</span>, Section 4: a cryptographic entity, existing in hardware or software, that can register and later assert possession of the registered key credential.<a href="#section-2-3.2.1" class="pilcrow">¶</a></p>
 </dd>
         <dd class="break"></dd>
 <dt id="section-2-3.3">Discoverable Credential:</dt>
@@ -1395,7 +1395,7 @@ The client will check this certificate using the rules in <a href="#tls_server_c
         <h3 id="name-fido-exchange-phase">
 <a href="#section-3.2" class="section-number selfRef">3.2. </a><a href="#name-fido-exchange-phase" class="section-name selfRef">FIDO-exchange phase</a>
         </h3>
-<p id="section-3.2-1">In this phase, the TLS record layer is used to securily tunnel information between the EAP-FIDO client and EAP-FIDO server.<a href="#section-3.2-1" class="pilcrow">¶</a></p>
+<p id="section-3.2-1">In this phase, the TLS record layer is used to securely tunnel information between the EAP-FIDO client and EAP-FIDO server.<a href="#section-3.2-1" class="pilcrow">¶</a></p>
 <p id="section-3.2-2">For the FIDO-exchange phase, the client has two options, depending on the configuration and the capability of the FIDO token.<a href="#section-3.2-2" class="pilcrow">¶</a></p>
 <p id="section-3.2-3">If the FIDO Authenticator supports Discoverable Credentials and EAP-FIDO is configured to use these for authentication, the client generates a challenge from the TLS keying material and triggers a FIDO challenge.<a href="#section-3.2-3" class="pilcrow">¶</a></p>
 <p id="section-3.2-4">If the client is not configured to use Discoverable Credentials, the client first needs to send its username to the server.
@@ -1465,7 +1465,7 @@ Minor version updates that only affect the inner protocol flow <span class="bcp1
 <a href="#section-4.2.3" class="section-number selfRef">4.2.3. </a><a href="#name-fragmentation" class="section-name selfRef">Fragmentation</a>
           </h4>
 <p id="section-4.2.3-1">Each EAP-FIDO message contains a single leg of a half-duplex conversation.
-Since EAP carrier protocols may constrain the length of an EAP message, it may be neccessary to fragment an EAP-FIDO message across multiple EAP messages.<a href="#section-4.2.3-1" class="pilcrow">¶</a></p>
+Since EAP carrier protocols may constrain the length of an EAP message, it may be necessary to fragment an EAP-FIDO message across multiple EAP messages.<a href="#section-4.2.3-1" class="pilcrow">¶</a></p>
 <p id="section-4.2.3-2">The fragmentation method is described in <span>[<a href="#RFC5216" class="cite xref">RFC5216</a>], <a href="https://rfc-editor.org/rfc/rfc5216#section-2.1.5" class="relref">Section 2.1.5</a></span>.<a href="#section-4.2.3-2" class="pilcrow">¶</a></p>
 </section>
 </div>
@@ -1677,7 +1677,7 @@ Since EAP carrier protocols may constrain the length of an EAP message, it may b
 <a href="#section-4.3.1.1" class="section-number selfRef">4.3.1.1. </a><a href="#name-success-indicator" class="section-name selfRef">Success indicator</a>
             </h5>
 <p id="section-4.3.1.1-1">This message is the protected success indicator, as required by <span>[<a href="#RFC9427" class="cite xref">RFC9427</a>], <a href="https://rfc-editor.org/rfc/rfc9427#section-5.2" class="relref">Section 5.2</a></span>.
-It is sent by the server to indicate a successfull authentication.
+It is sent by the server to indicate a successful authentication.
 Since EAP is a strict request-response based protocol, the client needs to reply to this message, so the server can send an EAP-Success message.
 The client will acknowledge the reception of this packet through the acknowledgement mechanism in EAP-TLS with an EAP-TLS acknowledgement packet.<a href="#section-4.3.1.1-1" class="pilcrow">¶</a></p>
 <p id="section-4.3.1.1-2">To achieve the compatibility with the protected success indication mechanism of other EAP methods, the attributes field of the message <span class="bcp14">MUST</span> be omitted, that is, this message is only one byte with the value of 0x00.<a href="#section-4.3.1.1-2" class="pilcrow">¶</a></p>
@@ -1793,16 +1793,16 @@ If an attribute was both present in the Authentication Request and the Informati
 <a href="#section-4.3.1.7" class="section-number selfRef">4.3.1.7. </a><a href="#name-error" class="section-name selfRef">Error</a>
             </h5>
 <p id="section-4.3.1.7-1">The Error message signals an error condition and can be sent both from client to server and vice versa.
-This error condition does not neccessarily lead to an authentication failure, since the EAP-FIDO server may decide that the previous authentication is sufficient. (See <a href="#examples_2hgracetime" class="auto internal xref">Appendix A.6</a> for an example for this use case)<a href="#section-4.3.1.7-1" class="pilcrow">¶</a></p>
+This error condition does not necessarily lead to an authentication failure, since the EAP-FIDO server may decide that the previous authentication is sufficient. (See <a href="#examples_2hgracetime" class="auto internal xref">Appendix A.6</a> for an example for this use case)<a href="#section-4.3.1.7-1" class="pilcrow">¶</a></p>
 <p id="section-4.3.1.7-2">The attributes field <span class="bcp14">MUST</span> include the attribute Error Code with an error code describing the error and <span class="bcp14">MAY</span> contain an Error Description attribute with a human-readable error description.<a href="#section-4.3.1.7-2" class="pilcrow">¶</a></p>
 </section>
 </div>
 </section>
 </div>
-<div id="potocol-sequence">
+<div id="protocol-sequence">
 <section id="section-4.3.2">
-          <h4 id="name-potocol-sequence">
-<a href="#section-4.3.2" class="section-number selfRef">4.3.2. </a><a href="#name-potocol-sequence" class="section-name selfRef">Potocol Sequence</a>
+          <h4 id="name-protocol-sequence">
+<a href="#section-4.3.2" class="section-number selfRef">4.3.2. </a><a href="#name-protocol-sequence" class="section-name selfRef">Protocol Sequence</a>
           </h4>
 <p id="section-4.3.2-1">The FIDO exchange phase starts with the server sending an authentication request to the client.
 This message is sent along with the last message of the server's TLS handshake.<a href="#section-4.3.2-1" class="pilcrow">¶</a></p>
@@ -1811,12 +1811,12 @@ This message is sent along with the last message of the server's TLS handshake.<
 This can be done by probing the FIDO Authenticator with all information given in the Authentication Request message.<a href="#section-4.3.2-3" class="pilcrow">¶</a></p>
 <p id="section-4.3.2-4">If the FIDO authentication is already possible at this point, the client performs the FIDO authentication process and sends an Authentication Response message with the results from the FIDO authentication to the server.
 This authentication flow can be used if the FIDO Authenticator has a Discoverable Credential registered for the given Relying Party ID.<a href="#section-4.3.2-4" class="pilcrow">¶</a></p>
-<p id="section-4.3.2-5">If the client needs additional information, i.e. because it uses Server-Side Credentials and therefore needs a list of Credential IDs, the client sends an information request to the server, which includes additional information from client to help the server to fulfil the information request.
+<p id="section-4.3.2-5">If the client needs additional information, i.e. because it uses Server-Side Credentials and therefore needs a list of Credential IDs, the client sends an information request to the server, which includes additional information from client to help the server to fulfill the information request.
 In the current specification, this is namely an identifier, from which the EAP-FIDO server can perform a lookup for all registered FIDO credentials registered to this identifier.<a href="#section-4.3.2-5" class="pilcrow">¶</a></p>
 <p id="section-4.3.2-6">Upon reception of the Information Request message from the client, the server looks up the registered Credential IDs for the given identity.
 Depending on the lookup, the requirements for user presence or user verification may change from the previous assumption.
 The found Credential IDs, and optionally also the updated authentication requirements, are then sent with the Information Response back to the client.<a href="#section-4.3.2-6" class="pilcrow">¶</a></p>
-<p id="section-4.3.2-7">The client can now, with the additonal information in the Information Response message, perform the FIDO authentication.
+<p id="section-4.3.2-7">The client can now, with the additional information in the Information Response message, perform the FIDO authentication.
 The result of the FIDO authentication is then sent to the Server in an Authentication Response message, which includes the PKID, Auth Data and FIDO Signature from the FIDO authentication result.<a href="#section-4.3.2-7" class="pilcrow">¶</a></p>
 <p id="section-4.3.2-8">When a server receives an Authentication Response message, it validates the FIDO data.
 If the FIDO authentication is successful and the FIDO key has sufficient authorization, the server sends a Success indication message to indicate the Success of the FIDO exchange phase.
@@ -1874,17 +1874,17 @@ The result is the clientDataHash for the FIDO authentication.<a href="#section-4
 <a href="#section-6.1" class="section-number selfRef">6.1. </a><a href="#name-registration-of-fido2-keys-" class="section-name selfRef">Registration of FIDO2 keys is out of scope</a>
         </h3>
 <p id="section-6.1-1">The FIDO CTAP protocol has distinct primitives for the registration and the usage of a FIDO2 credential.
-This specification requires that the registratrion of the security token has been done out-of-band, for example using the WebAuthn protocol in a browser context.<a href="#section-6.1-1" class="pilcrow">¶</a></p>
+This specification requires that the registration of the security token has been done out-of-band, for example using the WebAuthn protocol in a browser context.<a href="#section-6.1-1" class="pilcrow">¶</a></p>
 <p id="section-6.1-2">There are multiple degrees of freedom when registering a token with CTAP version 2.
-This specification recognises the following choices at registration time, and defines how to effectuate an authentication transaction for any combination of these choices.<a href="#section-6.1-2" class="pilcrow">¶</a></p>
+This specification recognizes the following choices at registration time, and defines how to effectuate an authentication transaction for any combination of these choices.<a href="#section-6.1-2" class="pilcrow">¶</a></p>
 <div id="discoverable-credentials-vs-server-side-credentials">
 <section id="section-6.1.1">
           <h4 id="name-discoverable-credentials-vs">
 <a href="#section-6.1.1" class="section-number selfRef">6.1.1. </a><a href="#name-discoverable-credentials-vs" class="section-name selfRef">Discoverable Credentials vs. Server-Side Credentials</a>
           </h4>
 <p id="section-6.1.1-1">FIDO2 tokens contain a master key which never leaves the security perimeter of the token.
-FIDO2 tokens transact by generating asymetric keypairs which are bound to a scope (often: a domain name, a RADIUS realm).
-The scoped keying material can be accessed using two diferent methods:<a href="#section-6.1.1-1" class="pilcrow">¶</a></p>
+FIDO2 tokens transact by generating asymmetric keypairs which are bound to a scope (often: a domain name, a RADIUS realm).
+The scoped keying material can be accessed using two different methods:<a href="#section-6.1.1-1" class="pilcrow">¶</a></p>
 <ul class="normal">
 <li class="normal" id="section-6.1.1-2.1">
               <p id="section-6.1.1-2.1.1">Server-Side Credentials: The keying material is not accessible directly, but only by providing a Credential ID that was generated during registration. Depending on the actual implementation inside the FIDO Authenticator, the Credential ID may be used as a seed to re-generate the specific key pair with the help of the FIDO Authenticator's master key. Other FIDO Authenticator implementations may store the keypair and generate a random Credential ID by which the key can be referenced. To trigger an authentication, the client must provide the correct Credential ID to the FIDO Authenticator. It is fair to assume that the number of Server-Side Credentials that a FIDO Authenticator can generate is not significantly limited, so the number of keys should not weigh in to the consideration whether or not it is worth to register a new Server-Side Credential for a given scope.<a href="#section-6.1.1-2.1.1" class="pilcrow">¶</a></p>
@@ -1894,12 +1894,24 @@ The scoped keying material can be accessed using two diferent methods:<a href="#
 </li>
           </ul>
 <p id="section-6.1.1-3">EAP-FIDO supports both Discoverable and Server-Side Credentials.<a href="#section-6.1.1-3" class="pilcrow">¶</a></p>
-<p id="section-6.1.1-4">Registering a Discoverable Credential has several advantages and one disadvantage:
-* No username needs to be sent during the authentication transaction
-* The transaction requires less round-trips due to skipping the username transmission process
-* The amount of data sent from EAP server to EAP peer is significantly smaller, reducing the probability of extra roundtrips or packet fragmentation
-* The scopes of the stored credentials can be seen and enumerated by the EAP supplicant, helping the user in finding the right value for configuring the EAP realm
-* The Discoverable Credential consumes space on the FIDO Authenticator, which might be limited<a href="#section-6.1.1-4" class="pilcrow">¶</a></p>
+<p id="section-6.1.1-4">Registering a Discoverable Credential has several advantages and one disadvantage:<a href="#section-6.1.1-4" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-6.1.1-5.1">
+              <p id="section-6.1.1-5.1.1">No username needs to be sent during the authentication transaction<a href="#section-6.1.1-5.1.1" class="pilcrow">¶</a></p>
+</li>
+            <li class="normal" id="section-6.1.1-5.2">
+              <p id="section-6.1.1-5.2.1">The transaction requires less round-trips due to skipping the username transmission process<a href="#section-6.1.1-5.2.1" class="pilcrow">¶</a></p>
+</li>
+            <li class="normal" id="section-6.1.1-5.3">
+              <p id="section-6.1.1-5.3.1">The amount of data sent from EAP server to EAP peer is significantly smaller, reducing the probability of extra roundtrips or packet fragmentation<a href="#section-6.1.1-5.3.1" class="pilcrow">¶</a></p>
+</li>
+            <li class="normal" id="section-6.1.1-5.4">
+              <p id="section-6.1.1-5.4.1">The scopes of the stored credentials can be seen and enumerated by the EAP supplicant, helping the user in finding the right value for configuring the EAP realm<a href="#section-6.1.1-5.4.1" class="pilcrow">¶</a></p>
+</li>
+            <li class="normal" id="section-6.1.1-5.5">
+              <p id="section-6.1.1-5.5.1">The Discoverable Credential consumes space on the FIDO Authenticator, which might be limited<a href="#section-6.1.1-5.5.1" class="pilcrow">¶</a></p>
+</li>
+          </ul>
 </section>
 </div>
 <div id="user-involvement-during-registration">
@@ -1974,12 +1986,12 @@ In EAP-FIDO, the following three notions interplay:<a href="#section-6.2-1" clas
 <p id="section-6.3-1">Since there already exist EAP methods that provide a TLS tunnel and are capable of encapsulating further EAP methods, e.g. EAP-PEAP, EAP-TTLS or EAP-TEAP, the question arises, why this specification does not focus solely on the FIDO exchange as a standalone EAP method instead of re-specifying a new EAP-method that again makes use of EAP-TLS.<a href="#section-6.3-1" class="pilcrow">¶</a></p>
 <p id="section-6.3-2">The main reason for a decision against this is the potential for misconfiguration.
 One of the goals for this EAP method is to provide a means to validate the server certificate using implicit configuration options.
-Using EAP-TTLS or EAP-PEAP would counteract this goal, since in most supplicants the configuration for the different phases of the tunneled TLS methods is done seperately, so the users would have to configure the certificate check parameters manually again.
-Additionally, not every supplicant application may allow the code for the phase 2 exchange to access information about the phase 1 exchange, namely the server certificate parameters, which is neccessary for the security of the EAP-FIDO exchange.
+Using EAP-TTLS or EAP-PEAP would counteract this goal, since in most supplicants the configuration for the different phases of the tunneled TLS methods is done separately, so the users would have to configure the certificate check parameters manually again.
+Additionally, not every supplicant application may allow the code for the phase 2 exchange to access information about the phase 1 exchange, namely the server certificate parameters, which is necessary for the security of the EAP-FIDO exchange.
 Specifying EAP-FIDO as standalone EAP methods could therefore require modifying the EAP stack.
 Implementers might be tempted to re-use the insecure and error-prone configuration interfaces.
 To prevent this from the start, EAP-FIDO specifies an EAP-TLS based EAP method that cannot be used standalone.<a href="#section-6.3-2" class="pilcrow">¶</a></p>
-<p id="section-6.3-3">Although this requires protentially duplicate code for supplicants that support multiple EAP-TLS based methods, the authors believe this means of specification to be more resistant against implementation errors and prevent error-prone user interfaces.<a href="#section-6.3-3" class="pilcrow">¶</a></p>
+<p id="section-6.3-3">Although this requires potentially duplicate code for supplicants that support multiple EAP-TLS based methods, the authors believe this means of specification to be more resistant against implementation errors and prevent error-prone user interfaces.<a href="#section-6.3-3" class="pilcrow">¶</a></p>
 </section>
 </div>
 </section>
@@ -2168,7 +2180,7 @@ The client responds with an acknowledgement and the server sends an EAP-Success<
 <p id="appendix-A.4-1">In this use case, different users have different authentication policies, i.e. employees are allowed to use silent authentication, but administrators need an authentication with user presence.<a href="#appendix-A.4-1" class="pilcrow">¶</a></p>
 <p id="appendix-A.4-2">The server starts with an AuthenticationRequest and no authentication requirements or an empty array as authentication requirements.
 The client transmits its identity to the server in the Information Request message.
-Now the server looks up the user and their registered Credential IDCredential IDss, and checks whether or not user presence verification is necessary.<a href="#appendix-A.4-2" class="pilcrow">¶</a></p>
+Now the server looks up the user and their registered Credential IDs, and checks whether or not user presence verification is necessary.<a href="#appendix-A.4-2" class="pilcrow">¶</a></p>
 <p id="appendix-A.4-3">If it is necessary, the server includes an authentication requirements attribute with the "up" value along with the PKIDs in the Information Response message.
 Since the client discards any previous attribute values, it now performs a FIDO authentication with user presence, and responds to the server.<a href="#appendix-A.4-3" class="pilcrow">¶</a></p>
 </section>
@@ -2207,7 +2219,7 @@ If not, meaning that the grace period has expired too, the server will send a Fa
 <div id="fa-authentication-with-client-certificate-on-tls-layer-and-fido-in-the-inner-authentication">
 <section id="appendix-A.7">
         <h3 id="name-2fa-authentication-with-cli">
-<a href="#appendix-A.7" class="section-number selfRef">A.7. </a><a href="#name-2fa-authentication-with-cli" class="section-name selfRef">2FA-AUthentication with client certificate on TLS layer and FIDO in the inner authentication</a>
+<a href="#appendix-A.7" class="section-number selfRef">A.7. </a><a href="#name-2fa-authentication-with-cli" class="section-name selfRef">2FA-Authentication with client certificate on TLS layer and FIDO in the inner authentication</a>
         </h3>
 <p id="appendix-A.7-1">Since EAP-FIDO uses TLS, it is possible to perform two-factor authentication directly with only EAP-FIDO.
 In this case, the client and server perform mutual authentication at the TLS layer.<a href="#appendix-A.7-1" class="pilcrow">¶</a></p>
@@ -2268,7 +2280,7 @@ The effects of a misconfigured RPID are only a problem if the used FIDO key is a
 <a href="#appendix-B.1.2" class="section-number selfRef">B.1.2. </a><a href="#name-option-2-mandate-rpid-to-eq" class="section-name selfRef">Option 2: Mandate RPID to equal Realm of the Username</a>
           </h4>
 <p id="appendix-B.1.2-1">The second option would be to mandate that the RPID is equal to the realm portion of the username.
-This restricts options on how to use EAP-FIDO and may cause unnecessary difficulties in routing, if the convinient routing domain (e.g. the registered domain for a company) should not be used as RPID due to security concerns, or different RPIDs should be used under the same routing realm.<a href="#appendix-B.1.2-1" class="pilcrow">¶</a></p>
+This restricts options on how to use EAP-FIDO and may cause unnecessary difficulties in routing, if the convenient routing domain (e.g. the registered domain for a company) should not be used as RPID due to security concerns, or different RPIDs should be used under the same routing realm.<a href="#appendix-B.1.2-1" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="option-3-rpid-is-determined-by-the-server-and-sent-before-the-tls-handshake">
@@ -2289,7 +2301,7 @@ This way, the client has a clear indication as to whether or not to trust the se
           </h4>
 <p id="appendix-B.1.4-1">With this option, the problem is that the client needs to cache the server certificate in order to determine if the RPID is valid. for the given certificate, unless the rules for certificate verification and RPID determination specify it otherwise.
 One possibility to circumvent this would be to allow the server certificate names and the RPID to deviate, but validate both against the realm of the outer username, e.g. a realm of example.com with a server certificate for radius.example.com and the FIDO RPID fido.example.com.<a href="#appendix-B.1.4-1" class="pilcrow">¶</a></p>
-<p id="appendix-B.1.4-2">This, however, adds a whole lot more of security concerns, especially in environments with different independent devisions under the same domain suffix.<a href="#appendix-B.1.4-2" class="pilcrow">¶</a></p>
+<p id="appendix-B.1.4-2">This, however, adds a whole lot more of security concerns, especially in environments with different independent divisions under the same domain suffix.<a href="#appendix-B.1.4-2" class="pilcrow">¶</a></p>
 </section>
 </div>
 </section>
@@ -2299,7 +2311,7 @@ One possibility to circumvent this would be to allow the server certificate name
         <h3 id="name-missing-features">
 <a href="#appendix-B.2" class="section-number selfRef">B.2. </a><a href="#name-missing-features" class="section-name selfRef">Missing Features</a>
         </h3>
-<p id="appendix-B.2-1">There are a lot of features, that have been brought up by several people at several occations.
+<p id="appendix-B.2-1">There are a lot of features, that have been brought up by several people at several occasions.
 This EAP method could include spec to address these problems.
 Also there may be FIDO-specific things that are not part of this specification.<a href="#appendix-B.2-1" class="pilcrow">¶</a></p>
 <div id="deprovisioning-of-eap-configuration">
@@ -2345,6 +2357,9 @@ Also there may be FIDO-specific things that are not part of this specification.<
 <li class="normal" id="appendix-C.1-4.1.1.1">
                 <p id="appendix-C.1-4.1.1.1.1">Updated terminology to align with the FIDO/WebAuthn terminology<a href="#appendix-C.1-4.1.1.1.1" class="pilcrow">¶</a></p>
 </li>
+              <li class="normal" id="appendix-C.1-4.1.1.2">
+                <p id="appendix-C.1-4.1.1.2.1">Reword introduction<a href="#appendix-C.1-4.1.1.2.1" class="pilcrow">¶</a></p>
+</li>
             </ul>
 </li>
         </ul>
@@ -2372,10 +2387,10 @@ Also there may be FIDO-specific things that are not part of this specification.<
 </div>
 </section>
 </div>
-<div id="acknowledgments">
+<div id="acknowledgements">
 <section id="appendix-D">
-      <h2 id="name-acknowledgments">
-<a href="#name-acknowledgments" class="section-name selfRef">Acknowledgments</a>
+      <h2 id="name-acknowledgements">
+<a href="#name-acknowledgements" class="section-name selfRef">Acknowledgements</a>
       </h2>
 <p id="appendix-D-1">The document authors want to thank Alexander Clouter for the idea of a default authentication server name.<a href="#appendix-D-1" class="pilcrow">¶</a></p>
 </section>
