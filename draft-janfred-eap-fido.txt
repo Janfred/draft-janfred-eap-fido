@@ -1188,7 +1188,13 @@ Appendix C.  Document Status
 
 C.1.  Change History
 
-   -00: Initial draft version
+   draft-janfred-eap-fido-00:
+
+      -  Initial draft version
+
+   draft-janfred-eap-fido-01:
+
+      -  Updated terminology to align with the FIDO/WebAuthn terminology
 
 C.2.  Missing Specs
 
