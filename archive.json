@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2023-12-14T01:00:28.663521+00:00",
+  "timestamp": "2023-12-17T01:04:55.214202+00:00",
   "repo": "Janfred/draft-janfred-eap-fido",
   "labels": [
     {
@@ -460,6 +460,32 @@
           "comments": []
         }
       ]
+    },
+    {
+      "number": 4,
+      "id": "PR_kwDOJtVZac5iCd-8",
+      "title": "deployment consideration",
+      "url": "https://github.com/Janfred/draft-janfred-eap-fido/pull/4",
+      "state": "OPEN",
+      "author": "restena-sw",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "closes #3",
+      "createdAt": "2023-12-14T19:53:33Z",
+      "updatedAt": "2023-12-15T16:35:17Z",
+      "baseRepository": "Janfred/draft-janfred-eap-fido",
+      "baseRefName": "main",
+      "baseRefOid": "2d5820ad76798c4bf5cb09af6ec0785b9145dccb",
+      "headRepository": "Janfred/draft-janfred-eap-fido",
+      "headRefName": "restena-sw-deployment-uv",
+      "headRefOid": "76cb76bc10eea4c0ab4dbd393ed5a00bc1f41660",
+      "closedAt": null,
+      "mergedAt": null,
+      "mergedBy": null,
+      "mergeCommit": null,
+      "comments": [],
+      "reviews": []
     }
   ]
 }
