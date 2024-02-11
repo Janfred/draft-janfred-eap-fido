@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2024-02-08T00:56:32.019324+00:00",
+  "timestamp": "2024-02-11T01:01:26.607459+00:00",
   "repo": "Janfred/draft-janfred-eap-fido",
   "labels": [
     {
@@ -55,15 +55,15 @@
       "id": "I_kwDOJtVZac55kFgx",
       "title": "Add security consideration / deployment consideration about transferable Keys if no user verification is used",
       "url": "https://github.com/Janfred/draft-janfred-eap-fido/issues/3",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "Janfred",
       "authorAssociation": "OWNER",
       "assignees": [],
       "labels": [],
       "body": "If only up is used and not uv, then a token may get transferred to a new person without knowledge of the RADIUS operator. This may not be desired, because even if a up is requested every 200 authentication, it does not ensure that it is still in the possession of the right user.",
       "createdAt": "2023-12-13T11:22:01Z",
-      "updatedAt": "2023-12-13T11:22:01Z",
-      "closedAt": null,
+      "updatedAt": "2024-02-08T13:29:03Z",
+      "closedAt": "2024-02-08T13:29:03Z",
       "comments": []
     }
   ],
@@ -466,24 +466,26 @@
       "id": "PR_kwDOJtVZac5iCd-8",
       "title": "deployment consideration",
       "url": "https://github.com/Janfred/draft-janfred-eap-fido/pull/4",
-      "state": "OPEN",
+      "state": "MERGED",
       "author": "restena-sw",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [],
       "body": "closes #3",
       "createdAt": "2023-12-14T19:53:33Z",
-      "updatedAt": "2023-12-15T16:35:17Z",
+      "updatedAt": "2024-02-08T13:29:03Z",
       "baseRepository": "Janfred/draft-janfred-eap-fido",
       "baseRefName": "main",
       "baseRefOid": "2d5820ad76798c4bf5cb09af6ec0785b9145dccb",
       "headRepository": "Janfred/draft-janfred-eap-fido",
       "headRefName": "restena-sw-deployment-uv",
       "headRefOid": "76cb76bc10eea4c0ab4dbd393ed5a00bc1f41660",
-      "closedAt": null,
-      "mergedAt": null,
-      "mergedBy": null,
-      "mergeCommit": null,
+      "closedAt": "2024-02-08T13:29:03Z",
+      "mergedAt": "2024-02-08T13:29:03Z",
+      "mergedBy": "Janfred",
+      "mergeCommit": {
+        "oid": "76cb76bc10eea4c0ab4dbd393ed5a00bc1f41660"
+      },
       "comments": [],
       "reviews": []
     }
