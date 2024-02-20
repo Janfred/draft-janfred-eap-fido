@@ -5,8 +5,8 @@
 EAP Method Update                                         J.-F. Rieckers
 Internet-Draft                                                       DFN
 Intended status: Standards Track                               S. Winter
-Expires: 11 August 2024                                          RESTENA
-                                                         8 February 2024
+Expires: 23 August 2024                                          RESTENA
+                                                        20 February 2024
 
 
                                 EAP-FIDO
@@ -44,7 +44,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 11 August 2024.
+   This Internet-Draft will expire on 23 August 2024.
 
 Copyright Notice
 
@@ -144,17 +144,27 @@ Table of Contents
    possible flaw.  The specification for EAP-TLS [RFC5216] does not
    include guidance on how to decide if a certificate is valid for this
    specific authentication.  Instead it assumes the client has knowledge
-   of the expected server name.  Since most clients do not have this
-   knowledge beforehand and no implicit way to determine this implicitly
-   from other configuration, this has lead to user interfaces, where the
-   default setting for certificate validation was set to "Do not
-   validate".  To successfully configure the validation, the users need
-   to know the correct server name.  Failure to configure this or not
-   configuring it at all could again lead to an attacker being able to
-   compromise the TLS connection and, as a result, also the password
-   sent in the inner authentication.  Server administrators also need to
-   choose their server certificate based on this and need to communicate
-   the parameters to their users.
+   of the expected server name.  This assumption is reasonable, if all
+   devices are managed centrally and the administrators can easily know
+   and configure all security-relevant parameters in advance.  Devices
+   in BYOD-environments like eduroam are not managed, so administrators
+   cannot push the desired configuration on the devices, but instead
+   have to rely on the users to configure their devices accordingly.
+   This implies that the administrators are aware of all needed
+   configuration items, provide the users with all this information, and
+   the users must follow these guides.  Failure to configure the
+   parameters correctly will result in connection failure, and
+   frustration, first on the user's end, then on the side of the help
+   desk, that has to deal with the users' problems.  If the user tries
+   to omit these parameters and the implementation allows a fallback to
+   just omitting the validation, the device will simply work, but now be
+   dangerously susceptible to attacks, e.g. by rouge access points with
+   the same SSID, to which the client will send their password to,
+   regardless of the presented server certificate.  The second outcome
+   is especially dangerous, because the operator cannot easily check
+   whether the device correctly performed the certificate check, and
+   since the connection just works, the user will not suspect that their
+   local configuration is faulty.
 
    There are two major issues here, that this specification wants to
    address.  Firstly, the use of passwords as authentication method
@@ -424,7 +434,7 @@ Table of Contents
    | 6      | Array   | Authentication | Sent by the server to         |
    |        | of      | requirements   | indicate the current          |
    |        | UTF-8   |                | authentication                |
-   |        | Strings |                | requiremens, i.e. if          |
+   |        | Strings |                | requirements, i.e. if         |
    |        |         |                | user presence or user         |
    |        |         |                | verification is required      |
    +--------+---------+----------------+-------------------------------+
@@ -883,7 +893,7 @@ Table of Contents
    basis.  The registration process makes sure that the token belongs to
    an authorized user initially at registration time - but this
    individual may transfer the token to other individuals post-
-   registration, either by concious decision or by accident.  The new
+   registration, either by conscious decision or by accident.  The new
    owner will be trivially able to complete an eventual UP challenge in
    the future, because UP challenges do not involve a personal
    authentication factor.  Examples of such transfers include a physical
@@ -895,18 +905,18 @@ Table of Contents
    personal authentication factor used during registration (e.g.  PIN,
    biometric).  While it may still be possible to transfer the token
    along with the authentication factor (say, USB Security Token and
-   associated PIN), this behaviour is then equivalent to directly
-   sharing the password in password-based EAP types or the private key
-   of a Client Certificate for certificate based login.  This has a
-   higher psychological barrier, is a known problem, and can be
-   sanctioned by the deployer in the same way as traditional password
-   sharing is.  Additionally, this prevents an attacker that came into
-   possession of the FIDO token without consent/knowledge of the
-   original owner from completing UV challenges, since they are missing
-   the required verification credential (i.e.  PIN or biometric).
+   associated PIN), this behavior is then equivalent to directly sharing
+   the password in password-based EAP types or the private key of a
+   Client Certificate for certificate based login.  This has a higher
+   psychological barrier, is a known problem, and can be sanctioned by
+   the deployer in the same way as traditional password sharing is.
+   Additionally, this prevents an attacker that came into possession of
+   the FIDO token without consent/knowledge of the original owner from
+   completing UV challenges, since they are missing the required
+   verification credential (i.e.  PIN or biometric).
 
-   We want to emphesize that preventing users from transfering ownership
-   is only possible if the used FIDO keys require biometric
+   We want to emphasize that preventing users from transferring
+   ownership is only possible if the used FIDO keys require biometric
    authentication and this can not be circumvented (i.e. by a backup-PIN
    or a PIN-based mechanism to add new fingerprints).
 
@@ -1110,7 +1120,7 @@ A.6.  Authentication with mandatory verification after a timespan with a
    to not kick out the user in the moment the timer expires, i.e. a user
    is currently not in the vicinity of the device at that time, but one
    would not want to kick out the user if it needs to reconnect due to
-   poor wifi performance.  Instead, the user may choose a convinient
+   poor wifi performance.  Instead, the user may choose a convenient
    time to verify their identity/presence within this grace period.
 
    The protocol flow is the same as the previous example, but this time
@@ -1185,7 +1195,7 @@ B.1.1.  Option 1: Configuration
    is also not that critical from a security standpoint.  The effects of
    a misconfigured RPID are only a problem if the used FIDO key is also
    registered with a third party, in which case the third party could
-   trick the client to connect to a bogous network.
+   trick the client to connect to a bogus network.
 
    If the RPID deviates from the realm, the client could send the
    requested RPID using Server Name Indication.
