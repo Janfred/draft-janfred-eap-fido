@@ -1604,7 +1604,7 @@ The other configuration options <span class="bcp14">SHOULD</span> still be made 
             <dd class="break"></dd>
 <dt id="section-3.2.2-4.17"></dt>
             <dd style="margin-left: 1.5em" id="section-3.2.2-4.18">
-              <p id="section-3.2.2-4.18.1">This option <span class="bcp14">MUST</span> be set to <code>eap-fido-authentication.&lt;C_FIDO_RPID&gt;</code> unless explicitly configured differently.<span class="cref" id="refrfc9525">Maybe we could reference RFC9525 here, especially Section 6.3 on how to match the DNS Domain Name Portion against a certificate. In this case, the <code>C_EXPECTED_SERVERNAME</code> would be a <code>DNS-ID</code> according to RFC9525 terminology.<span class="crefSource">Janfred</span></span>
+              <p id="section-3.2.2-4.18.1">This option <span class="bcp14">MUST</span> be set to <code>eap-fido-authentication.&lt;C_FIDO_RPID&gt;</code> unless explicitly configured differently.<span class="cref" id="refrfc9525">The prefix value is not final yet. Might still change, depending on the result of the name discussion. Maybe we could also reference RFC9525 here, especially Section 6.3 on how to match the DNS Domain Name Portion against a certificate. In this case, the <code>C_EXPECTED_SERVERNAME</code> would be a <code>DNS-ID</code> according to RFC9525 terminology.<span class="crefSource">Janfred</span></span>
 If manually configured, implementations <span class="bcp14">MUST</span> check that <code>C_EXPECTED_SERVERNAME</code> is either equal to or a subdomain (in any depth) of <code>C_FIDO_RPID</code> and <span class="bcp14">MUST</span> reject configurations that do not match this condition.<a href="#section-3.2.2-4.18.1" class="pilcrow">¶</a></p>
 </dd>
             <dd class="break"></dd>
@@ -1616,9 +1616,9 @@ If manually configured, implementations <span class="bcp14">MUST</span> check th
             <dd class="break"></dd>
 <dt id="section-3.2.2-4.21"></dt>
             <dd style="margin-left: 1.5em" id="section-3.2.2-4.22">
-              <p id="section-3.2.2-4.22.1">This option <span class="bcp14">MUST</span> default to the set of trust anchors already present in the operating system, i.e. the set of trust anchors used to verify server certificates for HTTPS, unless the operating system has no such list.
+              <p id="section-3.2.2-4.22.1">This option <span class="bcp14">MUST</span> default to the set of trust anchors already present on the device, i.e. the set of trust anchors used to verify server certificates for HTTPS, unless the device has no such set available.
 In this case, the implementation <span class="bcp14">MUST</span> enforce that this option is set.
-Implementations <span class="bcp14">MUST NOT</span> allow this option to be set to trust any certificate.
+Implementations <span class="bcp14">MUST NOT</span> allow this option to be set to trust certificates from unknown trust anchors.
 Implementations <span class="bcp14">SHOULD</span> allow to select multiple trust anchors.<a href="#section-3.2.2-4.22.1" class="pilcrow">¶</a></p>
 </dd>
           <dd class="break"></dd>
@@ -1656,8 +1656,9 @@ Implementations <span class="bcp14">SHOULD</span> allow to select multiple trust
 <a href="#section-4.1.1" class="section-number selfRef">4.1.1. </a><a href="#name-eap-fido-start-packet" class="section-name selfRef">EAP-FIDO Start packet</a>
           </h4>
 <p id="section-4.1.1-1">In the first packet from the server to the client, the S-bit of the Flags <span class="bcp14">MUST</span> be set, indicating the start of the EAP-FIDO protocol.
-It <span class="bcp14">MUST NOT</span> be set in any subsequent packet.<a href="#section-4.1.1-1" class="pilcrow">¶</a></p>
-<p id="section-4.1.1-2">Future versions of EAP-FIDO <span class="bcp14">MAY</span> send additional data outside the TLS tunnel with the first EAP message, supplicants <span class="bcp14">SHOULD</span> ignore any additional data sent with this packet.<a href="#section-4.1.1-2" class="pilcrow">¶</a></p>
+The S-bit <span class="bcp14">MUST NOT</span> be set in any subsequent packet.
+This packet contains only the EAP header (Code, Identifier, Length, Type) and the EAP-TLS flags.<a href="#section-4.1.1-1" class="pilcrow">¶</a></p>
+<p id="section-4.1.1-2">Future versions of EAP-FIDO may send additional data outside the TLS tunnel with the first EAP message, supplicants <span class="bcp14">SHOULD</span> ignore any additional data sent with this packet.<a href="#section-4.1.1-2" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="version-negotiation">
@@ -1699,7 +1700,7 @@ Since EAP carrier protocols may constrain the length of an EAP message, it may b
               <p id="section-4.1.4-2.2.1">Mutual authentication is not required. Implementations <span class="bcp14">MUST</span> support EAP-FIDO without TLS client authentication, but <span class="bcp14">MAY</span> allow it, i.e. if EAP-FIDO is used as a 2-Factor authentication method where TLS client certificates are the first factor and the FIDO authentication is the second.<a href="#section-4.1.4-2.2.1" class="pilcrow">¶</a></p>
 </li>
             <li class="normal" id="section-4.1.4-2.3">
-              <p id="section-4.1.4-2.3.1">The certificate of the server <span class="bcp14">MUST</span> be validated. The different options for validation are listed in <a href="#tls_server_cert_verify" class="auto internal xref">Section 4.1.5</a>.<a href="#section-4.1.4-2.3.1" class="pilcrow">¶</a></p>
+              <p id="section-4.1.4-2.3.1">The certificate of the server <span class="bcp14">MUST</span> be validated according to the verification steps described in the next section.<a href="#section-4.1.4-2.3.1" class="pilcrow">¶</a></p>
 </li>
           </ul>
 </section>
@@ -1711,7 +1712,7 @@ Since EAP carrier protocols may constrain the length of an EAP message, it may b
           </h4>
 <p id="section-4.1.5-1">Clients <span class="bcp14">MUST</span> validate the certificate sent by the server.
 For this the client must first check that <code>C_EXPECTED_SERVERNAME</code> is set to the exact domain or a subdomain of <code>C_FIDO_RPID</code>.
-This ensures that a misconfiguration cannot be used for cross-domain attacks.
+This ensures that a misconfiguration cannot be used for cross-domain or even cross-protocol attacks.
 The client then <span class="bcp14">MUST</span> validate that the server certificate is valid for the domain saved in the configuration item <code>C_EXPECTED_SERVERNAME</code> and the certificate chain leads back to a trust anchor listed in <code>C_TLS_TRUST_ANCHORS</code>.<span class="cref" id="rfc9525again">Again, here we could look if we can reference RFC9525?<span class="crefSource">Janfred</span></span><a href="#section-4.1.5-1" class="pilcrow">¶</a></p>
 <ul class="normal">
 <li class="normal" id="section-4.1.5-2.1">
@@ -1734,7 +1735,7 @@ The client then <span class="bcp14">MUST</span> validate that the server certifi
           <h4 id="name-message-format">
 <a href="#section-4.2.1" class="section-number selfRef">4.2.1. </a><a href="#name-message-format" class="section-name selfRef">Message format</a>
           </h4>
-<p id="section-4.2.1-1">All EAP-FIDO messages in the inner authentication consist of a CBOR sequence with two elements:<a href="#section-4.2.1-1" class="pilcrow">¶</a></p>
+<p id="section-4.2.1-1">All EAP-FIDO messages in the inner authentication consist of a CBOR sequence with one or two elements:<a href="#section-4.2.1-1" class="pilcrow">¶</a></p>
 <span class="break"></span><dl class="dlParallel" id="section-4.2.1-2">
             <dt id="section-4.2.1-2.1">type:</dt>
             <dd style="margin-left: 1.5em" id="section-4.2.1-2.2">
@@ -1743,7 +1744,8 @@ The client then <span class="bcp14">MUST</span> validate that the server certifi
             <dd class="break"></dd>
 <dt id="section-4.2.1-2.3">attributes:</dt>
             <dd style="margin-left: 1.5em" id="section-4.2.1-2.4">
-              <p id="section-4.2.1-2.4.1">a CBOR encoded map with attributes. A list of the different attributes, their assigned mapkey and the type are listed in <a href="#mapkeys" class="auto internal xref">Table 3</a>.<a href="#section-4.2.1-2.4.1" class="pilcrow">¶</a></p>
+              <p id="section-4.2.1-2.4.1">a CBOR encoded map with attributes. A list of the different attributes, their assigned mapkey and the type are listed in <a href="#mapkeys" class="auto internal xref">Table 3</a>.
+This element is omitted in the Success indicator message.<a href="#section-4.2.1-2.4.1" class="pilcrow">¶</a></p>
 </dd>
           <dd class="break"></dd>
 </dl>
@@ -1860,7 +1862,7 @@ The client then <span class="bcp14">MUST</span> validate that the server certifi
                 <td class="text-left" rowspan="1" colspan="1">7</td>
                 <td class="text-left" rowspan="1" colspan="1">Integer</td>
                 <td class="text-left" rowspan="1" colspan="1">Error Code</td>
-                <td class="text-left" rowspan="1" colspan="1">A code describing the error , see <a href="#error_conditions" class="auto internal xref">Section 4.4</a> for a list of error codes</td>
+                <td class="text-left" rowspan="1" colspan="1">A code describing the error, see <a href="#error_conditions" class="auto internal xref">Section 4.4</a> for a list of error codes</td>
               </tr>
               <tr>
                 <td class="text-left" rowspan="1" colspan="1">8</td>
@@ -2051,6 +2053,8 @@ FIDO_CHALLENGE_TLS = TLS-Exporter("fido challenge", NULL, 32)
 <p id="section-4.3-8">The second item is the optional additional client data sent by the server.<a href="#section-4.3-8" class="pilcrow">¶</a></p>
 <p id="section-4.3-9">Both items are concatenated and hashed using SHA-256.
 The result is the clientDataHash for the FIDO authentication.<a href="#section-4.3-9" class="pilcrow">¶</a></p>
+<p id="section-4.3-10">TODO: format of Authentication Requirements and how to send them using CTAP<a href="#section-4.3-10" class="pilcrow">¶</a></p>
+<p id="section-4.3-11">Completely TODO: Server side. How to validate. If up/uv was provided, even if not required, the server should update the "last up/uv seen" field for example.<a href="#section-4.3-11" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="error_conditions">
@@ -2058,7 +2062,7 @@ The result is the clientDataHash for the FIDO authentication.<a href="#section-4
         <h3 id="name-error-conditions">
 <a href="#section-4.4" class="section-number selfRef">4.4. </a><a href="#name-error-conditions" class="section-name selfRef">Error conditions</a>
         </h3>
-<p id="section-4.4-1">TODO<a href="#section-4.4-1" class="pilcrow">¶</a></p>
+<p id="section-4.4-1">TODO, only a stub, not yet finished.<a href="#section-4.4-1" class="pilcrow">¶</a></p>
 <p id="section-4.4-2">Errors can be non-recoverable, or recoverable.
 If an error is non-recoverable, then it <span class="bcp14">MUST</span> only appear in a Failure Indication message.
 If an error is recoverable, the peer may decide whether or not the current error condition is non-recoverable or not.
@@ -2691,6 +2695,9 @@ The research whether or not this is a problem is still TODO, if FIDO experts hav
 </li>
               <li class="normal" id="appendix-C.1-6.1.1.5">
                 <p id="appendix-C.1-6.1.1.5.1">Adjust message formats and attribute mapkeys to not transmit the RPID any more.<a href="#appendix-C.1-6.1.1.5.1" class="pilcrow">¶</a></p>
+</li>
+              <li class="normal" id="appendix-C.1-6.1.1.6">
+                <p id="appendix-C.1-6.1.1.6.1">Add first few paragraphs on error handling<a href="#appendix-C.1-6.1.1.6.1" class="pilcrow">¶</a></p>
 </li>
             </ul>
 </li>
